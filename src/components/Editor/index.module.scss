@@ -1,0 +1,9 @@
+.editor {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template:
+    "title title" 60px
+    "materials monitor" 1fr
+    "timeline timeline" 1fr / 1fr 1fr;
+}
