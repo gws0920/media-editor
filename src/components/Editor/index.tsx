@@ -10,8 +10,10 @@ export default class Editor extends Component {
     return (
       <div className={styles.editor}>
         <Title />
-        <Materials />
-        <Monitor />
+        <main>
+          <Materials />
+          <Monitor />
+        </main>
         <Timeline />
       </div>
     )

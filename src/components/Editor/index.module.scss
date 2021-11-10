@@ -4,6 +4,15 @@
   display: grid;
   grid-template:
     "title title" 60px
-    "materials monitor" 1fr
-    "timeline timeline" 1fr / 1fr 1fr;
+    "main main" auto
+    "timeline timeline" 300px;
+  background: #1C1E26;
+  section {
+    border: 1px solid black;
+    box-sizing: border-box;
+  }
+  main {
+    grid-area: main;
+    display: flex;
+  }
 }

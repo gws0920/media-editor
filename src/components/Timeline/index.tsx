@@ -23,14 +23,14 @@ export default function Timeline() {
           <Icon name="redo" />
         </li>
         <li>
-          <Icon name="delete_outline" />
+          <Icon name="delete" />
         </li>
         <li>
           <Icon name="content_cut" />
         </li>
       </nav>
       <main>
-        <Stage width={window.innerWidth} height={window.innerHeight / 2} fill="#D8D8D8">
+        <Stage width={window.innerWidth - 100} height={100} fill="#D8D8D8">
           <Layer>
             <Group draggable name="这是名字" id="id" onMouseDown={onClick} x={100} y={0} width={300} height={100} stroke={selected === '1' ? 'red' : 'black'}>
               <Rect

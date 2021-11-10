@@ -1,3 +1,22 @@
 .timeline {
   grid-area: timeline;
+  display: flex;
+  flex-direction: column;
+  nav {
+    display: flex;
+    align-items: center;
+    li {
+      transition: color .15s ease;
+      color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        color: #FFF;
+      }
+    }
+  }
+  main {
+    flex: 1;
+    canvas {
+      background-color: gray !important;
+    }
+  }
 }

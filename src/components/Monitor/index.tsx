@@ -5,19 +5,28 @@ import Icon from '../Icon'
 interface iProps { }
 export default class Title extends Component {
   state: {
-    isPlaying: boolean
+    isPlaying: boolean,
   }
+  ref: HTMLDivElement | null
   constructor (props: iProps) {
     super(props)
     this.state = {
-      isPlaying: false
+      isPlaying: false,
     }
+    this.ref = null
+  }
+  componentDidMount() {
+    if (this.ref) {
+      const { height } = this.ref.getBoundingClientRect()
+      this.ref.style.width = height / 9 * 16 + 'px';
+    }
+    
   }
   render() {
     const { isPlaying } = this.state
     return (
       <section className={styles.monitor}>
-        <div className={styles.mCanvas}>
+        <div className={styles.mCanvas} ref={el => this.ref = el}>
           <canvas width="960" height="540" />
         </div>
         <div className={styles.controls}>
