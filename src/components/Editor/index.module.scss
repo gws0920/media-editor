@@ -5,7 +5,7 @@
   grid-template:
     "title title" 60px
     "main main" auto
-    "timeline timeline" 300px;
+    "timeline timeline" minmax(300px, 45vh);
   background: #1C1E26;
   section {
     border: 1px solid black;

@@ -7,6 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "classnames-ts": "^1.0.2",
     "konva": "^8.2.3",
     "material-design-icons": "^3.0.1",
     "react": "^17.0.0",
@@ -16,6 +17,7 @@
     "use-image": "^1.0.8"
   },
   "devDependencies": {
+    "@types/classnames": "^2.3.1",
     "@types/node": "^16.11.7",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
