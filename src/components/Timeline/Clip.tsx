@@ -30,7 +30,7 @@ export default class Clip extends React.Component<iProps> {
     const { selectedId, clip } = this.props
     return (
       <Group>
-        <Group ref={ref => (this.groupRef = ref)} draggable name={clip.name} id={clip.id} x={100} y={10} width={300} height={100}>
+        <Group ref={ref => (this.groupRef = ref)} draggable name={clip.name} id={clip.id} x={100} y={100} width={300} height={100}>
           <Rect
             x={0}
             y={0}

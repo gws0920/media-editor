@@ -379,11 +379,6 @@ chalk@^2.0.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-classname-js@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/classname-js/-/classname-js-1.0.2.tgz#e0bed259e97738e7735503d62b69e13763de8693"
-  integrity sha1-4L7SWel3OOdzVQPWK2nhN2PehpM=
-
 classnames-ts@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/classnames-ts/-/classnames-ts-1.0.2.tgz#b0fd112f3810517a76aaeffbc2de11cc8c955da3"

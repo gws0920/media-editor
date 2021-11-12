@@ -2,21 +2,67 @@
   grid-area: timeline;
   display: flex;
   flex-direction: column;
+
   nav {
     display: flex;
     align-items: center;
+    padding: 12px 18px;
+
     li {
       transition: color .15s ease;
       color: rgba(255, 255, 255, 0.5);
+
       &:hover {
         color: #FFF;
       }
+
+      span {
+        font-size: 20px;
+      }
+    }
+
+    li+li {
+      margin-left: 16px;
     }
   }
+
   main {
     flex: 1;
-    canvas {
-      background-color: gray !important;
+    background-color: #212631;
+    display: flex;
+
+    aside {
+      width: 140px;
+      height: 100%;
+      overflow: auto;
+
+      .trackItem {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .container {
+      flex: 1;
+      height: 100%;
+      border: 1px solid red;
+      overflow: auto;
+      position: relative;
+
+      .trackListScroll {
+        width: 400vw;
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .stage {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
     }
   }
 }
