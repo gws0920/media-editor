@@ -1,6 +1,6 @@
 import { useState, createRef, useEffect } from 'react'
 import styles from './index.module.scss'
-import Icon from '../Icon'
+import Controls from './Controls'
 import { Stage, Layer } from 'react-konva'
 import Clip from './Clip'
 import Ruler from './Ruler'
@@ -41,20 +41,7 @@ export default function Timeline() {
   }
   return (
     <section className={styles.timeline}>
-      <nav>
-        <li>
-          <Icon name="undo" />
-        </li>
-        <li>
-          <Icon name="redo" />
-        </li>
-        <li>
-          <Icon name="delete" />
-        </li>
-        <li>
-          <Icon name="content_cut" />
-        </li>
-      </nav>
+      <Controls />
       {/* 时码线 */}
       <Stage
         className={styles.rulerStage}
