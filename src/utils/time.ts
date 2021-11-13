@@ -1,4 +1,4 @@
-import { FPS } from '../const'
+import { FPS, RULER_MAP } from '../const'
 /**
  * 微秒 -> 时：分：秒：帧
  */
@@ -17,4 +17,20 @@ export function us2FrameTime(us: number): string {
 */
 export function prefixZero(num: number|string, n = 2) {
   return (Array(n).join('0') + num).slice(-n);
+}
+
+/**
+ * us -> px
+ */
+export function us2px(us: number, level = 3): number {
+  const { STEP, TIME } = RULER_MAP[level]
+  return STEP / TIME * us
+}
+
+/**
+ * px -> us
+ */
+ export function px2us(px: number, level = 3): number {
+  const { STEP, TIME } = RULER_MAP[level]
+  return TIME / STEP * px
 }

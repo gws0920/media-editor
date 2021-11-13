@@ -8,6 +8,7 @@ import { VIDEO_TRACK_HEIGHT } from '../../const'
 // 拖拽吸附实例 https://konvajs.org/docs/sandbox/Objects_Snapping.html
 // 读取json直接渲染 https://konvajs.org/docs/data_and_serialization/Complex_Load.html
 const rulerHeight = 50
+const PADDING = 500 // canvas 缓冲
 export default function Timeline() {
   const [selected, setSelected] = useState<string>('')
   const [height, setHeight] = useState<number>(0)
@@ -26,7 +27,7 @@ export default function Timeline() {
       setHeight(mainDom.getBoundingClientRect().height - 2)
     }
   })
-  const onScroll = (e:any) => {
+  const onScroll = (e: any) => {
     if (!e) return
     const { scrollLeft, scrollTop } = e.target
     setScrollX(scrollLeft)
@@ -54,12 +55,23 @@ export default function Timeline() {
           <Icon name="content_cut" />
         </li>
       </nav>
+      {/* 时码线 */}
+      <Stage
+        className={styles.rulerStage}
+        width={width - 140}
+        height={rulerHeight}
+        style={{ marginLeft: 140 + 'px' }}
+      >
+        <Layer>
+          <Ruler width={width} scrollX={scrollX} />
+        </Layer>
+      </Stage>
       <main ref={mainRef} style={{ width: width + 'px' }}>
         <aside
           onScroll={onScroll}
-          ref={trackRef} 
-          style={{ marginTop: rulerHeight + 'px', height: height - rulerHeight + 'px' }}
-          >
+          ref={trackRef}
+          style={{ height: height + 'px' }}
+        >
           {tracks.map(track => (
             <div
               key={track}
@@ -70,30 +82,29 @@ export default function Timeline() {
             </div>
           ))}
         </aside>
-        <div ref={trackScrollRef} className={styles.container} style={{ height: height + 'px' }} onScroll={onScroll}>
+        <div
+          ref={trackScrollRef}
+          className={styles.container}
+          style={{ height: height + 'px' }}
+          onScroll={onScroll}>
           <div
             className={styles.trackListScroll}
-            style={{ height: tracks.length * VIDEO_TRACK_HEIGHT + rulerHeight - + 'px' }}
           >
+            <Stage
+              className={styles.stage}
+              width={width - 140 + PADDING *  2}
+              height={tracks.length * VIDEO_TRACK_HEIGHT}
+              style={{ transform: `translate(${scrollX}px, 0)` }}
+              onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
+            >
+              <Layer>
+                <Clip
+                  selectedId={selected}
+                  clip={{ name: '片段1', id: 'no.1' }}
+                />
+              </Layer>
+            </Stage>
           </div>
-          <Stage
-            className={styles.stage}
-            width={width - 140}
-            height={height}
-            // style={{ left: scrollX + 'px', top: scrollY + 'px' }}
-            onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
-          >
-            {/* 时码线 */}
-            <Layer>
-              <Ruler width={width} />
-            </Layer>
-            <Layer>
-              <Clip
-                selectedId={selected}
-                clip={{ name: '片段1', id: 'no.1' }}
-              />
-            </Layer>
-          </Stage>
         </div>
       </main>
     </section>

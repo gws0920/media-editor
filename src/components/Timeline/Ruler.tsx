@@ -1,8 +1,8 @@
 import React from 'react'
 import { Group, Line, Text, Shape } from 'react-konva'
 import Konva from 'konva'
-import { RULER_STEP } from '../../const'
-import { us2FrameTime } from '../../utils'
+import { RULER_MAP } from '../../const'
+import { us2FrameTime, px2us } from '../../utils'
 
 interface RulerProps {
   x?: number
@@ -11,37 +11,36 @@ interface RulerProps {
   height?: number
   level?: number
   scrollX?: number
-  scrollY?: number
 }
+
 export default function Ruler({
   x = 0,
   y = 0,
   width,
-  height = 20,
-  level = 7,
+  height = 15,
+  level = 3,
   scrollX = 0,
-  scrollY = 0
 }: RulerProps) {
-
+  const { STEP, TIME, GROUP } = RULER_MAP[level]
   const sceneFunc = (context: Konva.Context, shape: Konva.Shape) => {
     context.beginPath()
     context._context.font = "13px bold"
     context._context.fillStyle = "rgba(255, 255, 255, 0.5)"
-
+    // 先画底边线
     context.moveTo(x, y + height)
     context.lineTo(width, y + height)
-    let posX = x
-    while (posX < width) {
-      context.moveTo(posX, y + height)
-      const isHigh = (posX - x) / RULER_STEP % 10 === 0
+    let posX = x + ~~(scrollX / STEP) * STEP
+    while (posX - scrollX < width) {
+      context.moveTo(posX - scrollX, y + height)
+      const isHigh = (posX - x) / STEP % GROUP === 0
       if (isHigh) {
-        context.lineTo(posX, y)
-        context.fillText(us2FrameTime(13042000), posX - 35, y - 10)
-
+        context.lineTo(posX - scrollX, y)
+        const us = px2us(scrollX + posX - scrollX, level)
+        context.fillText(us2FrameTime(us), posX - 35 - scrollX, y - 10)
       } else {
-        context.lineTo(posX, y + height / 2)
+        context.lineTo(posX - scrollX, y + height / 2)
       }
-      posX += RULER_STEP
+      posX += STEP
     }
     context.closePath()
     context.fillStrokeShape(shape)

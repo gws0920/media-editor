@@ -1,7 +1,7 @@
 import React from 'react'
 import useImage from 'use-image'
 import { Image, Text, Rect, Group, Transformer } from 'react-konva'
-
+import { VIDEO_TRACK_HEIGHT } from '../../const'
 interface iProps {
   selectedId: string
   clip: {
@@ -30,12 +30,21 @@ export default class Clip extends React.Component<iProps> {
     const { selectedId, clip } = this.props
     return (
       <Group>
-        <Group ref={ref => (this.groupRef = ref)} draggable name={clip.name} id={clip.id} x={100} y={100} width={300} height={100}>
+        <Group
+          ref={ref => (this.groupRef = ref)}
+          draggable
+          name={clip.name}
+          id={clip.id}
+          x={0}
+          y={0}
+          width={300}
+          height={VIDEO_TRACK_HEIGHT}
+        >
           <Rect
             x={0}
             y={0}
             width={300}
-            height={100}
+            height={VIDEO_TRACK_HEIGHT}
             fill="#666"
             stroke={selectedId === clip.id ? 'red' : 'black'}
           />

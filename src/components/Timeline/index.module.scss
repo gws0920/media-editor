@@ -3,11 +3,12 @@
   display: flex;
   flex-direction: column;
 
+  // 控制按钮
   nav {
     display: flex;
     align-items: center;
     padding: 12px 18px;
-
+    border-bottom: 1px solid #0E0F13;
     li {
       transition: color .15s ease;
       color: rgba(255, 255, 255, 0.5);
@@ -26,11 +27,17 @@
     }
   }
 
+  // 时码线
+  .rulerStage {
+    background-color: #212631;
+  }
+
   main {
     flex: 1;
     background-color: #212631;
     display: flex;
 
+    // 时间线左侧控制条
     aside {
       width: 140px;
       height: 100%;
@@ -49,20 +56,18 @@
     .container {
       flex: 1;
       height: 100%;
-      border: 1px solid red;
       overflow: auto;
       position: relative;
 
       .trackListScroll {
         width: 400vw;
-        background-color: rgba(255, 255, 255, 0.5);
       }
 
       .stage {
-        position: absolute;
         top: 0;
         left: 0;
       }
     }
   }
+
 }
