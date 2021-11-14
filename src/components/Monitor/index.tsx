@@ -20,7 +20,6 @@ export default class Title extends Component {
       const { height } = this.ref.getBoundingClientRect()
       this.ref.style.width = height / 9 * 16 + 'px';
     }
-    
   }
   render() {
     const { isPlaying } = this.state
