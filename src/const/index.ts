@@ -1,3 +1,6 @@
+export * from './enum'
+export * from './interface'
+
 // 时码线 每个刻度相距多少px
 export const FPS = 25 // 帧率
 export const RULER_MAP = [

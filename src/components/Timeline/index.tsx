@@ -1,10 +1,12 @@
 import { useState, createRef, useEffect } from 'react'
 import styles from './index.module.scss'
 import Controls from './Controls'
-import { Stage, Layer } from 'react-konva'
+import { Stage, Layer, Group } from 'react-konva'
 import Clip from './Clip'
 import Ruler from './Ruler'
-import { VIDEO_TRACK_HEIGHT } from '../../const'
+import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack } from '../../const'
+import trackData from './mockTracks'
+
 // 拖拽吸附实例 https://konvajs.org/docs/sandbox/Objects_Snapping.html
 // 读取json直接渲染 https://konvajs.org/docs/data_and_serialization/Complex_Load.html
 const rulerHeight = 50
@@ -16,10 +18,10 @@ export default function Timeline() {
   const [width, setWidth] = useState<number>(window.innerWidth - 2)
   const [scrollX, setScrollX] = useState<number>(0)
   const [scrollY, setScrollY] = useState<number>(0)
+  const [level, setLevel] = useState<number>(2)
   const trackRef = createRef<HTMLDivElement>()
   const trackScrollRef = createRef<HTMLDivElement>()
-
-  const tracks = [1, 2, 3, 4, 5]
+  const [tracks, setTracks] = useState<Array<iTrack>>(trackData)
 
   useEffect(() => {
     const mainDom = mainRef.current
@@ -39,33 +41,36 @@ export default function Timeline() {
       trackScrollRef.current.scrollTop = scrollTop
     }
   }
+  const changeRulerLevel = (change: number) => {
+    let l = Math.min(level + change, RULER_MAP.length - 1)
+    l = Math.max(0, l)
+    setLevel(l)
+  }
   return (
     <section className={styles.timeline}>
-      <Controls />
+      <Controls changeRulerLevel={changeRulerLevel} />
       {/* 时码线 */}
-      <Stage
+      <Ruler
         className={styles.rulerStage}
-        width={width - 140}
-        height={rulerHeight}
+        rulerHeight={rulerHeight}
         style={{ marginLeft: 140 + 'px' }}
-      >
-        <Layer>
-          <Ruler width={width} scrollX={scrollX} />
-        </Layer>
-      </Stage>
+        width={width}
+        scrollX={scrollX}
+        level={level}
+      />
       <main ref={mainRef} style={{ width: width + 'px' }}>
         <aside
           onScroll={onScroll}
           ref={trackRef}
           style={{ height: height + 'px' }}
         >
-          {tracks.map(track => (
+          {tracks.map((track, index) => (
             <div
-              key={track}
+              key={index}
               className={styles.trackItem}
               style={{ height: VIDEO_TRACK_HEIGHT + 'px' }}
             >
-              {track}
+              {index}
             </div>
           ))}
         </aside>
@@ -79,16 +84,25 @@ export default function Timeline() {
           >
             <Stage
               className={styles.stage}
-              width={width - 140 + PADDING *  2}
+              width={width - 140 + PADDING * 2}
               height={tracks.length * VIDEO_TRACK_HEIGHT}
               style={{ transform: `translate(${scrollX}px, 0)` }}
               onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
             >
               <Layer>
-                <Clip
-                  selectedId={selected}
-                  clip={{ name: '片段1', id: 'no.1' }}
-                />
+                {tracks.map((track, trackIndex) => (
+                  <Group>
+                    {track.clips.map(clip => (
+                      <Clip
+                        selectedId={selected}
+                        clip={clip}
+                        trackIndex={trackIndex}
+                        level={level}
+                      />
+                    ))}
+                  </Group>
+                ))}
+                
               </Layer>
             </Stage>
           </div>

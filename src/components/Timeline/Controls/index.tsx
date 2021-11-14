@@ -2,7 +2,7 @@ import React from 'react'
 import Icon from '../../Icon'
 import styles from './index.module.scss'
 interface iProps {
-  changeRulerLevel?: (level: number) => void
+  changeRulerLevel: (level: number) => void
 }
 export default function Controls({ changeRulerLevel }: iProps) {
   return (
@@ -22,7 +22,8 @@ export default function Controls({ changeRulerLevel }: iProps) {
         </li>
       </div>
       <div className={styles.right}>
-        right
+        <Icon name="undo" onClick={() => changeRulerLevel(-1)} />
+        <Icon name="undo" onClick={() => changeRulerLevel(1)} />
       </div>
     </nav>
   )

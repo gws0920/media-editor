@@ -1,5 +1,5 @@
 import React from 'react'
-import { Group, Line, Text, Shape } from 'react-konva'
+import { Group, Stage, Layer, Shape } from 'react-konva'
 import Konva from 'konva'
 import { RULER_MAP } from '../../const'
 import { us2FrameTime, px2us } from '../../utils'
@@ -10,16 +10,22 @@ interface RulerProps {
   width: number
   height?: number
   level?: number
-  scrollX?: number
+  scrollX?: number,
+  rulerHeight?: number,
+  className?: string
+  style?: object
 }
 
 export default function Ruler({
   x = 0,
   y = 0,
+  rulerHeight,
   width,
   height = 15,
   level = 3,
   scrollX = 0,
+  className,
+  style
 }: RulerProps) {
   const { STEP, TIME, GROUP } = RULER_MAP[level]
   const sceneFunc = (context: Konva.Context, shape: Konva.Shape) => {
@@ -46,14 +52,21 @@ export default function Ruler({
     context.fillStrokeShape(shape)
   }
   return (
-    <Group x={x} y={y}>
-      <Shape
-        stroke="rgba(255, 255, 255, 0.5)"
-        sceneFunc={sceneFunc}
-        strokeWidth={1}
-        y={y + 30}
-        x={0}
-      />
-    </Group>
+    <Stage
+      className={className}
+      width={width - 140}
+      height={rulerHeight}
+      style={style}
+    >
+      <Layer x={x} y={y}>
+        <Shape
+          stroke="rgba(255, 255, 255, 0.5)"
+          sceneFunc={sceneFunc}
+          strokeWidth={1}
+          y={y + 30}
+          x={0}
+        />
+      </Layer>
+    </Stage>
   )
 }

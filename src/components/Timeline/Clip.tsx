@@ -1,13 +1,13 @@
 import React from 'react'
 import useImage from 'use-image'
 import { Image, Text, Rect, Group, Transformer } from 'react-konva'
-import { VIDEO_TRACK_HEIGHT } from '../../const'
+import { VIDEO_TRACK_HEIGHT, iClip } from '../../const'
+import { us2px } from '../../utils'
 interface iProps {
   selectedId: string
-  clip: {
-    name: string,
-    id: string
-  },
+  clip: iClip,
+  trackIndex: number,
+  level: number,
 }
 export default class Clip extends React.Component<iProps> {
   groupRef: object | null
@@ -27,23 +27,25 @@ export default class Clip extends React.Component<iProps> {
   }
 
   render() {
-    const { selectedId, clip } = this.props
+    const { selectedId, clip, trackIndex, level } = this.props
+    const { inPoint, outPoint, duration, id, name } = clip
+    const width = us2px(duration, level)
     return (
       <Group>
         <Group
           ref={ref => (this.groupRef = ref)}
           draggable
-          name={clip.name}
-          id={clip.id}
-          x={0}
-          y={0}
-          width={300}
+          name={name}
+          id={id}
+          x={us2px(inPoint, level)}
+          y={trackIndex * VIDEO_TRACK_HEIGHT}
+          width={width}
           height={VIDEO_TRACK_HEIGHT}
         >
           <Rect
             x={0}
             y={0}
-            width={300}
+            width={width}
             height={VIDEO_TRACK_HEIGHT}
             fill="#666"
             stroke={selectedId === clip.id ? 'red' : 'black'}
