@@ -1,10 +1,10 @@
 import { useState, createRef, useEffect } from 'react'
 import styles from './index.module.scss'
 import Controls from './Controls'
-import { Stage, Layer, Group } from 'react-konva'
+import { Stage, Layer, Group, Line } from 'react-konva'
 import Clip from './Clip'
 import Ruler from './Ruler'
-import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack } from '../../const'
+import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack, iClip, TRACK_TYPE } from '../../const'
 import trackData from './mockTracks'
 
 // 拖拽吸附实例 https://konvajs.org/docs/sandbox/Objects_Snapping.html
@@ -22,6 +22,8 @@ export default function Timeline() {
   const trackRef = createRef<HTMLDivElement>()
   const trackScrollRef = createRef<HTMLDivElement>()
   const [tracks, setTracks] = useState<Array<iTrack>>(trackData)
+  const [horizontalLine, setHorizontalLine] = useState<number | boolean>(false)
+  const [verticalLine, setVerticalLine] = useState<number | boolean>(false)
 
   useEffect(() => {
     const mainDom = mainRef.current
@@ -41,14 +43,37 @@ export default function Timeline() {
       trackScrollRef.current.scrollTop = scrollTop
     }
   }
+  // 修改时码线等级
   const changeRulerLevel = (change: number) => {
     let l = Math.min(level + change, RULER_MAP.length - 1)
     l = Math.max(0, l)
     setLevel(l)
   }
+  // clip 拖拽结束
+  const dragEndClip = (oldClip: iClip, newClip: iClip, oldTrackIndex: number, targetTrackIndex: number) => {
+    // 旧轨道删除
+    const oldTrack = tracks[oldTrackIndex]
+    const oldClipIndex = oldTrack.clips.indexOf(oldClip)
+    oldTrack.clips.splice(oldClipIndex, 1)
+    // 新轨道添加
+    if (targetTrackIndex % 1 === 0.5) {
+      // 插入轨道
+      const newTrack = { type: TRACK_TYPE.VIDEO, clips: [newClip]}
+      tracks.splice(Math.ceil(targetTrackIndex), 0, newTrack)
+    } else {
+      const newTrack = tracks[targetTrackIndex]
+      let index = newTrack.clips.findIndex(clip => clip.inPoint > newClip.inPoint)
+      if (index === -1) {
+        index = newTrack.clips.length
+      }
+      newTrack.clips.splice(index, 0, newClip)
+    }
+    const newTracks = tracks.filter(track => track.clips.length)
+    setTracks(newTracks)
+  }
   return (
     <section className={styles.timeline}>
-      <Controls changeRulerLevel={changeRulerLevel} />
+      <Controls changeRulerLevel={changeRulerLevel} onTest={() => console.log(tracks)} />
       {/* 时码线 */}
       <Ruler
         className={styles.rulerStage}
@@ -90,19 +115,32 @@ export default function Timeline() {
               onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
             >
               <Layer>
+                {/* 吸附线 */}
+                {horizontalLine !== false && <Line
+                  points={[0, +horizontalLine, width, +horizontalLine]}
+                  stroke='green'
+                  strokeWidth={2}
+                  lineJoin='round'
+                  dash={[26, 10]}
+                />}
+                {/* 轨道 */}
                 {tracks.map((track, trackIndex) => (
-                  <Group>
+                  <Group key={trackIndex}>
                     {track.clips.map(clip => (
                       <Clip
                         selectedId={selected}
                         clip={clip}
                         trackIndex={trackIndex}
                         level={level}
+                        key={clip.id}
+                        setHorizontalLine={setHorizontalLine}
+                        setVerticalLine={setVerticalLine}
+                        dragEndClip={dragEndClip}
                       />
                     ))}
                   </Group>
                 ))}
-                
+
               </Layer>
             </Stage>
           </div>

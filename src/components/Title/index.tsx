@@ -8,7 +8,7 @@ export default class Title extends Component {
       <header className={styles.title}>
         <nav>
           <li>
-            <Icon name="undo" />
+            <Icon name="arrow_back" />
             <span className={styles.label}>返回</span>
           </li>
         </nav>

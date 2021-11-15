@@ -42,5 +42,5 @@ export function us2px(us: number, level = 3): number {
  */
  export function px2us(px: number, level = 3): number {
   const { STEP, TIME } = RULER_MAP[level]
-  return TIME / STEP * px
+  return ~~(TIME / STEP * px)
 }

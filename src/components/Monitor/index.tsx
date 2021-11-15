@@ -38,6 +38,10 @@ export default class Title extends Component {
             <Icon name="skip_next" />
           </div> */}
           {/* <div className={styles.speed}>速度</div> */}
+
+          {/* <Icon name="volume_up" />
+          <Icon name="volume_off" />
+          <Icon name="volume_mute" /> */}
         </div>
       </section>
     )

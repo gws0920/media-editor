@@ -1,35 +1,98 @@
 import React from 'react'
 import useImage from 'use-image'
 import { Image, Text, Rect, Group, Transformer } from 'react-konva'
-import { VIDEO_TRACK_HEIGHT, iClip } from '../../const'
-import { us2px } from '../../utils'
+import { VIDEO_TRACK_HEIGHT, iClip, TRACK_MARGIN } from '../../const'
+import { us2px, px2us } from '../../utils'
+import { IRect, Vector2d } from 'konva/lib/types'
+
+export interface Box extends IRect {
+  rotation: number
+}
 interface iProps {
   selectedId: string
   clip: iClip,
   trackIndex: number,
-  level: number,
+  level: number // 时码线等级
+  setHorizontalLine: (y: number | boolean) => void // 设置水平吸附线
+  setVerticalLine: (x: number | boolean) => void // 设置竖直吸附线
+  dragEndClip: (oldClip: iClip, newClip: iClip, oldTrackIndex:number, targetTrackIndex: number) => void
 }
 export default class Clip extends React.Component<iProps> {
-  groupRef: object | null
+  groupRef: {
+    absolutePosition: () => { x: number; y: number },
+    attrs: { x: number, y: number }
+  } | null
   transformerRef: object | null
-
+  rectRef: object | null
+  state: {
+    x: number,
+    y: number,
+    scale: { x: number, y: number }
+  }
   constructor (props: iProps) {
     super(props)
     this.groupRef = null
     this.transformerRef = null
+    this.rectRef = null
+    this.state = {
+      x: 0,
+      y: 0,
+      scale: { x: 1, y: 1 }
+    }
   }
 
-  componentWillReceiveProps(nextProps: iProps) {
-    const { selectedId, clip } = nextProps
-    if (selectedId === clip.id) {
-      console.log('选中了 显示transformer')
+  onTransform = (e: any) => {
+    console.log(e, 'transform end')
+    const { scaleX, x } = e.target.attrs
+
+    // const { width } = this.state
+    this.setState({
+      x,
+      // width: width * scaleX,
+      scale: { x: 1, y: 1 }
+    })
+  }
+
+  dragBoundFunc = (pos: Vector2d, e: any): Vector2d => {
+    const { offsetY } = e
+    if (Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT) < VIDEO_TRACK_HEIGHT / 4 ||
+      Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT) > VIDEO_TRACK_HEIGHT / 4 * 3) {
+      const y = Math.round(offsetY / VIDEO_TRACK_HEIGHT) * VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT / 2
+      this.props.setHorizontalLine(y + VIDEO_TRACK_HEIGHT / 2)
+      return {
+        x: pos.x,
+        y
+      }
     }
+    this.props.setHorizontalLine(false)
+    return {
+      x: pos.x,
+      y: Math.floor(offsetY / VIDEO_TRACK_HEIGHT) * VIDEO_TRACK_HEIGHT
+    }
+  }
+
+  onDragEnd = () => {
+    if (this.groupRef) {
+      const { level, clip, dragEndClip, trackIndex } = this.props
+      const { x, y } = this.groupRef.attrs
+      const inPoint = px2us(x, level)
+      const newClip = {
+        ...clip,
+        inPoint,
+        outPoint: inPoint + clip.duration
+      }
+      const targetTrackIndex = y / VIDEO_TRACK_HEIGHT
+      dragEndClip(clip, newClip, trackIndex, targetTrackIndex)
+    }
+    this.props.setHorizontalLine(false)
   }
 
   render() {
     const { selectedId, clip, trackIndex, level } = this.props
     const { inPoint, outPoint, duration, id, name } = clip
+    const { x, y, scale } = this.state
     const width = us2px(duration, level)
+
     return (
       <Group>
         <Group
@@ -38,19 +101,25 @@ export default class Clip extends React.Component<iProps> {
           name={name}
           id={id}
           x={us2px(inPoint, level)}
-          y={trackIndex * VIDEO_TRACK_HEIGHT}
+          y={trackIndex * VIDEO_TRACK_HEIGHT + TRACK_MARGIN / 2}
           width={width}
-          height={VIDEO_TRACK_HEIGHT}
+          height={VIDEO_TRACK_HEIGHT - TRACK_MARGIN}
+          onTransform={this.onTransform}
+          dragBoundFunc={this.dragBoundFunc}
+          onDragEnd={this.onDragEnd}
+          scale={scale}
         >
           <Rect
             x={0}
             y={0}
+            ref={ref => (this.rectRef = ref)}
             width={width}
-            height={VIDEO_TRACK_HEIGHT}
-            fill="#666"
-            stroke={selectedId === clip.id ? 'red' : 'black'}
+            height={VIDEO_TRACK_HEIGHT - TRACK_MARGIN}
+            cornerRadius={4}
+            fill="#999"
+            stroke={selectedId === clip.id ? 'red' : '#666'}
           />
-          <Text text={clip.name || '片段名称'} fontSize={15} x={10} y={10} />
+          <Text text={(clip.name || '片段名称')} fontSize={15} x={10} y={10} />
           {/* <Image image={img} x={100} y={0} scale={scale} width={50} height={100} /> */}
         </Group>
         {selectedId === clip.id && (
@@ -59,12 +128,15 @@ export default class Clip extends React.Component<iProps> {
             nodes={[this.groupRef]}
             rotateEnabled={false}
             enabledAnchors={['middle-left', 'middle-right']}
-            anchorFill="#666"
-            anchorStrokeWidth={20}
-            anchorStrokeHeight={60}
+            // anchorFill="#666"
+            // anchorStrokeWidth={20}
             keepRatio={false}
-          />
+            borderEnabled={false}
+            anchorSize={20}
+          >
+          </Transformer>
         )}
+
       </Group>
     )
   }
