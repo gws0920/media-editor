@@ -16,7 +16,7 @@ app.get('/test', (req, res) => {
     code: 200,
     "data|20": [{
       "duration|1000000-20000000": 20000000,
-      "url": "@image(480x270, @color)",
+      "url": "@image(480x270, @color, #FFF, +1)",
       "name": "@name",
       "id": "@guid"
     }]

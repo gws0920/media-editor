@@ -21,6 +21,7 @@ export default function Timeline() {
   const [level, setLevel] = useState<number>(2)
   const trackRef = createRef<HTMLDivElement>()
   const trackScrollRef = createRef<HTMLDivElement>()
+  const stageRef = createRef<any>()
   const [tracks, setTracks] = useState<Array<iTrack>>(trackData)
   const [horizontalLine, setHorizontalLine] = useState<number | boolean>(false)
   const [verticalLine, setVerticalLine] = useState<number | boolean>(false)
@@ -73,7 +74,7 @@ export default function Timeline() {
   }
   return (
     <section className={styles.timeline}>
-      <Controls changeRulerLevel={changeRulerLevel} onTest={() => console.log(tracks)} />
+      <Controls changeRulerLevel={changeRulerLevel} onTest={() => console.log(tracks, stageRef)} />
       {/* 时码线 */}
       <Ruler
         className={styles.rulerStage}
@@ -113,6 +114,7 @@ export default function Timeline() {
               height={tracks.length * VIDEO_TRACK_HEIGHT}
               style={{ transform: `translate(${scrollX}px, 0)` }}
               onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
+              ref={stageRef}
             >
               <Layer>
                 {/* 吸附线 */}
@@ -133,6 +135,7 @@ export default function Timeline() {
                         trackIndex={trackIndex}
                         level={level}
                         key={clip.id}
+                        scrollX={scrollX}
                         setHorizontalLine={setHorizontalLine}
                         setVerticalLine={setVerticalLine}
                         dragEndClip={dragEndClip}

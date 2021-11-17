@@ -13,6 +13,7 @@ interface iProps {
   clip: iClip,
   trackIndex: number,
   level: number // 时码线等级
+  scrollX: number // 滚动条位置
   setHorizontalLine: (y: number | boolean) => void // 设置水平吸附线
   setVerticalLine: (x: number | boolean) => void // 设置竖直吸附线
   dragEndClip: (oldClip: iClip, newClip: iClip, oldTrackIndex:number, targetTrackIndex: number) => void
@@ -25,8 +26,6 @@ export default class Clip extends React.Component<iProps> {
   transformerRef: object | null
   rectRef: object | null
   state: {
-    x: number,
-    y: number,
     scale: { x: number, y: number }
   }
   constructor (props: iProps) {
@@ -35,28 +34,22 @@ export default class Clip extends React.Component<iProps> {
     this.transformerRef = null
     this.rectRef = null
     this.state = {
-      x: 0,
-      y: 0,
       scale: { x: 1, y: 1 }
     }
   }
 
   onTransform = (e: any) => {
     console.log(e, 'transform end')
-    const { scaleX, x } = e.target.attrs
-
     // const { width } = this.state
-    this.setState({
-      x,
-      // width: width * scaleX,
-      scale: { x: 1, y: 1 }
-    })
+    // this.setState({
+    //   scale: { x: 1, y: 1 }
+    // })
   }
 
   dragBoundFunc = (pos: Vector2d, e: any): Vector2d => {
     const { offsetY } = e
-    if (Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT) < VIDEO_TRACK_HEIGHT / 4 ||
-      Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT) > VIDEO_TRACK_HEIGHT / 4 * 3) {
+    const offset = Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT)
+    if (offset < VIDEO_TRACK_HEIGHT / 4 || offset > VIDEO_TRACK_HEIGHT / 4 * 3) {
       const y = Math.round(offsetY / VIDEO_TRACK_HEIGHT) * VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT / 2
       this.props.setHorizontalLine(y + VIDEO_TRACK_HEIGHT / 2)
       return {
@@ -88,9 +81,9 @@ export default class Clip extends React.Component<iProps> {
   }
 
   render() {
-    const { selectedId, clip, trackIndex, level } = this.props
+    const { selectedId, clip, trackIndex, level, scrollX } = this.props
     const { inPoint, outPoint, duration, id, name } = clip
-    const { x, y, scale } = this.state
+    const { scale } = this.state
     const width = us2px(duration, level)
 
     return (
@@ -100,7 +93,7 @@ export default class Clip extends React.Component<iProps> {
           draggable
           name={name}
           id={id}
-          x={us2px(inPoint, level)}
+          x={us2px(inPoint, level) - scrollX}
           y={trackIndex * VIDEO_TRACK_HEIGHT + TRACK_MARGIN / 2}
           width={width}
           height={VIDEO_TRACK_HEIGHT - TRACK_MARGIN}
@@ -108,6 +101,7 @@ export default class Clip extends React.Component<iProps> {
           dragBoundFunc={this.dragBoundFunc}
           onDragEnd={this.onDragEnd}
           scale={scale}
+          offsetY={TRACK_MARGIN / 2}
         >
           <Rect
             x={0}
@@ -133,8 +127,7 @@ export default class Clip extends React.Component<iProps> {
             keepRatio={false}
             borderEnabled={false}
             anchorSize={20}
-          >
-          </Transformer>
+          />
         )}
 
       </Group>
