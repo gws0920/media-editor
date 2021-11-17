@@ -1,7 +1,9 @@
 import { TRACK_TYPE, MEDIA_TYPE } from '../../const'
+import { guid } from '../../utils'
 const tracks = [
   {
     type: TRACK_TYPE.VIDEO,
+    id: guid(),
     clips: [
       {
         inPoint: 0,
@@ -19,6 +21,7 @@ const tracks = [
   },
   {
     type: TRACK_TYPE.VIDEO,
+    id: guid(),
     clips: [
       {
         inPoint: 0,
@@ -36,6 +39,7 @@ const tracks = [
   },
   {
     type: TRACK_TYPE.VIDEO,
+    id: guid(),
     clips: [
       {
         inPoint: 0,
@@ -53,6 +57,7 @@ const tracks = [
   },
   {
     type: TRACK_TYPE.VIDEO,
+    id: guid(),
     clips: [
       {
         inPoint: 0,

@@ -4,6 +4,7 @@ import Controls from './Controls'
 import { Stage, Layer, Group, Line } from 'react-konva'
 import Clip from './Clip'
 import Ruler from './Ruler'
+import { guid } from '../../utils'
 import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack, iClip, TRACK_TYPE, THUMBNAIL_GROUP } from '../../const'
 import trackData from './mockTracks'
 
@@ -53,24 +54,24 @@ export default function Timeline() {
   // clip 拖拽结束
   const dragEndClip = (oldClip: iClip, newClip: iClip, oldTrackIndex: number, targetTrackIndex: number) => {
     // 旧轨道删除
-    const oldTrack = tracks[oldTrackIndex]
+    const tracksClone = [...tracks]
+    const oldTrack = tracksClone[oldTrackIndex]
     const oldClipIndex = oldTrack.clips.indexOf(oldClip)
     oldTrack.clips.splice(oldClipIndex, 1)
     // 新轨道添加
     if (targetTrackIndex % 1 === 0.5) {
       // 插入轨道
-      const newTrack = { type: TRACK_TYPE.VIDEO, clips: [newClip] }
-      tracks.splice(Math.ceil(targetTrackIndex), 0, newTrack)
+      const newTrack = { type: TRACK_TYPE.VIDEO, clips: [newClip], id: guid() }
+      tracksClone.splice(Math.ceil(targetTrackIndex), 0, newTrack)
     } else {
-      const newTrack = tracks[targetTrackIndex]
+      const newTrack = tracksClone[targetTrackIndex]
       let index = newTrack.clips.findIndex(clip => clip.inPoint > newClip.inPoint)
       if (index === -1) {
         index = newTrack.clips.length
       }
       newTrack.clips.splice(index, 0, newClip)
     }
-    const newTracks = tracks.filter(track => track.clips.length)
-    setTracks(newTracks)
+    setTracks(tracksClone.filter(track => track.clips.length))
   }
   // 点击画布
   const onClickStage = (e: any) => {
@@ -141,7 +142,7 @@ export default function Timeline() {
                 />}
                 {/* 轨道 */}
                 {tracks.map((track, trackIndex) => (
-                  <Group key={trackIndex}>
+                  <Group key={track.id}>
                     {track.clips.map(clip => (
                       <Clip
                         selectedId={selected}

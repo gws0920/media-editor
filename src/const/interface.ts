@@ -14,6 +14,7 @@ export interface iClip {
 }
 
 export interface iTrack {
-  type: TRACK_TYPE
+  type: TRACK_TYPE,
+  id: string,
   clips: Array<iClip>
 }
