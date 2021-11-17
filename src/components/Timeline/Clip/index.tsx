@@ -79,23 +79,6 @@ export default class Clip extends React.Component<iProps> {
     this.props.setHorizontalLine(false)
   }
 
-  componentDidMount() {
-    this.renderThumbnails()
-  }
-
-  renderThumbnails() {
-
-    // return result.map(item => (
-    //   <Image
-    //     image={item.img}
-    //     x={item.x}
-    //     y={item.y}
-    //     width={itemWidth}
-    //     height={item.height}
-    //   />
-    // ))
-  }
-
   render() {
     const { selectedId, clip, trackIndex, level, scrollX } = this.props
     const { inPoint, outPoint, duration, id, name } = clip
