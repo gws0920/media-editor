@@ -26,8 +26,9 @@ export default function Controls({ changeRulerLevel, onTest }: iProps) {
         </li>
       </div>
       <div className={styles.right}>
-        <Icon name="undo" onClick={() => changeRulerLevel(-1)} />
-        <Icon name="undo" onClick={() => changeRulerLevel(1)} />
+        <Icon name="remove" onClick={() => changeRulerLevel(-1)} />
+        时码线缩放比率
+        <Icon name="add" onClick={() => changeRulerLevel(1)} />
       </div>
     </nav>
   )

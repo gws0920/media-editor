@@ -11,6 +11,10 @@ export const RULER_MAP = [
   { STEP: 18, TIME: 3000000, GROUP: 10 },
   { STEP: 16, TIME: 6000000, GROUP: 10 },
 ]
-export const VIDEO_TRACK_HEIGHT = 80;
-export const OTHER_TRACK_HEIGHT = 60;
-export const TRACK_MARGIN = 4; // 轨道之间的间隙
+export const VIDEO_TRACK_HEIGHT = 80
+export const OTHER_TRACK_HEIGHT = 60
+export const TRACK_MARGIN = 4 // 轨道之间的间隙
+export const BORDER_WIDTH = 2 // 轨道之间的间隙
+
+export const COLORS = ['f2e779', 'f2d879', '79f282', '79f2b4']
+export const THUMBNAIL_GROUP = 'Thumbnail_Group'

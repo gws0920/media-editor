@@ -1,9 +1,9 @@
 import React from 'react'
-import useImage from 'use-image'
-import { Image, Text, Rect, Group, Transformer } from 'react-konva'
-import { VIDEO_TRACK_HEIGHT, iClip, TRACK_MARGIN } from '../../const'
-import { us2px, px2us } from '../../utils'
+import { Text, Rect, Group, Transformer } from 'react-konva'
+import { VIDEO_TRACK_HEIGHT, iClip, TRACK_MARGIN, BORDER_WIDTH } from '../../../const'
+import { us2px, px2us } from '../../../utils'
 import { IRect, Vector2d } from 'konva/lib/types'
+import Thumbnail from './Thumbnail'
 
 export interface Box extends IRect {
   rotation: number
@@ -16,7 +16,7 @@ interface iProps {
   scrollX: number // 滚动条位置
   setHorizontalLine: (y: number | boolean) => void // 设置水平吸附线
   setVerticalLine: (x: number | boolean) => void // 设置竖直吸附线
-  dragEndClip: (oldClip: iClip, newClip: iClip, oldTrackIndex:number, targetTrackIndex: number) => void
+  dragEndClip: (oldClip: iClip, newClip: iClip, oldTrackIndex: number, targetTrackIndex: number) => void
 }
 export default class Clip extends React.Component<iProps> {
   groupRef: {
@@ -39,7 +39,6 @@ export default class Clip extends React.Component<iProps> {
   }
 
   onTransform = (e: any) => {
-    console.log(e, 'transform end')
     // const { width } = this.state
     // this.setState({
     //   scale: { x: 1, y: 1 }
@@ -80,12 +79,28 @@ export default class Clip extends React.Component<iProps> {
     this.props.setHorizontalLine(false)
   }
 
+  componentDidMount() {
+    this.renderThumbnails()
+  }
+
+  renderThumbnails() {
+
+    // return result.map(item => (
+    //   <Image
+    //     image={item.img}
+    //     x={item.x}
+    //     y={item.y}
+    //     width={itemWidth}
+    //     height={item.height}
+    //   />
+    // ))
+  }
+
   render() {
     const { selectedId, clip, trackIndex, level, scrollX } = this.props
     const { inPoint, outPoint, duration, id, name } = clip
     const { scale } = this.state
     const width = us2px(duration, level)
-
     return (
       <Group>
         <Group
@@ -111,10 +126,19 @@ export default class Clip extends React.Component<iProps> {
             height={VIDEO_TRACK_HEIGHT - TRACK_MARGIN}
             cornerRadius={4}
             fill="#999"
+            strokeWidth={BORDER_WIDTH}
             stroke={selectedId === clip.id ? 'red' : '#666'}
           />
-          <Text text={(clip.name || '片段名称')} fontSize={15} x={10} y={10} />
-          {/* <Image image={img} x={100} y={0} scale={scale} width={50} height={100} /> */}
+          <Thumbnail clip={clip} level={level} />
+          <Group clip={{ x: 0, y: 0, width: width - 20, height: 20 }} x={10} y={10}>
+            <Text
+              text={(clip.name || '片段名称')}
+              fontSize={15}
+              x={0}
+              y={0}
+              fill="white"
+            />
+          </Group>
         </Group>
         {selectedId === clip.id && (
           <Transformer
@@ -122,8 +146,6 @@ export default class Clip extends React.Component<iProps> {
             nodes={[this.groupRef]}
             rotateEnabled={false}
             enabledAnchors={['middle-left', 'middle-right']}
-            // anchorFill="#666"
-            // anchorStrokeWidth={20}
             keepRatio={false}
             borderEnabled={false}
             anchorSize={20}

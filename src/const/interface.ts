@@ -6,8 +6,11 @@ export interface iClip {
   duration: number
   name?: string
   id?: string
-  thumbnail?: string,
-  mediaType?: MEDIA_TYPE
+  thumbnail: string,
+  mediaType?: MEDIA_TYPE,
+  trimOut: number,
+  trimIn: number,
+  speed: number
 }
 
 export interface iTrack {

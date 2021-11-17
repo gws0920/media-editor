@@ -4,7 +4,7 @@ import Controls from './Controls'
 import { Stage, Layer, Group, Line } from 'react-konva'
 import Clip from './Clip'
 import Ruler from './Ruler'
-import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack, iClip, TRACK_TYPE } from '../../const'
+import { VIDEO_TRACK_HEIGHT, RULER_MAP, iTrack, iClip, TRACK_TYPE, THUMBNAIL_GROUP } from '../../const'
 import trackData from './mockTracks'
 
 // 拖拽吸附实例 https://konvajs.org/docs/sandbox/Objects_Snapping.html
@@ -59,7 +59,7 @@ export default function Timeline() {
     // 新轨道添加
     if (targetTrackIndex % 1 === 0.5) {
       // 插入轨道
-      const newTrack = { type: TRACK_TYPE.VIDEO, clips: [newClip]}
+      const newTrack = { type: TRACK_TYPE.VIDEO, clips: [newClip] }
       tracks.splice(Math.ceil(targetTrackIndex), 0, newTrack)
     } else {
       const newTrack = tracks[targetTrackIndex]
@@ -71,6 +71,16 @@ export default function Timeline() {
     }
     const newTracks = tracks.filter(track => track.clips.length)
     setTracks(newTracks)
+  }
+  // 点击画布
+  const onClickStage = (e: any) => {
+    let parent = e?.target?.parent
+    if (parent?.attrs?.name === THUMBNAIL_GROUP) {
+      parent = parent?.parent
+    }
+    console.log(e)
+    const id = parent?.attrs?.id
+    setSelected(id)
   }
   return (
     <section className={styles.timeline}>
@@ -100,20 +110,24 @@ export default function Timeline() {
             </div>
           ))}
         </aside>
+        {/* 时间线容器 */}
         <div
           ref={trackScrollRef}
           className={styles.container}
           style={{ height: height + 'px' }}
-          onScroll={onScroll}>
+          onScroll={onScroll}
+        >
+          {/* 撑开滚动条 */}
           <div
             className={styles.trackListScroll}
           >
+            {/* 时间线主体 */}
             <Stage
               className={styles.stage}
               width={width - 140 + PADDING * 2}
               height={tracks.length * VIDEO_TRACK_HEIGHT}
               style={{ transform: `translate(${scrollX}px, 0)` }}
-              onClick={e => setSelected(e?.target?.parent?.attrs?.id)}
+              onClick={onClickStage}
               ref={stageRef}
             >
               <Layer>
