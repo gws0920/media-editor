@@ -45,7 +45,7 @@ export default class Clip extends React.Component<iProps> {
     // })
   }
 
-  dragBoundFunc = (pos: Vector2d, e: any): Vector2d => {
+  dragBoundFunc = (pos?: any, e?: any): Vector2d => {
     const { offsetY } = e
     const offset = Math.abs(offsetY % VIDEO_TRACK_HEIGHT - VIDEO_TRACK_HEIGHT)
     if (offset < VIDEO_TRACK_HEIGHT / 4 || offset > VIDEO_TRACK_HEIGHT / 4 * 3) {

@@ -8,8 +8,8 @@
 - `react`
 - `typescript`
 - Icon: [Google Fonts](https://fonts.google.com/icons)
-- 假数据: mockjs
-- canvas交互: Konva, react-konva
+- 假数据: `mockjs`
+- canvas交互: `konva`, `react-konva`
 
 
 ## 安装教程
@@ -24,3 +24,6 @@ yarn dev
 <!-- 启动mock数据 -->
 yarn mock
 ```
+
+
+> [百度统计 - gitee](https://tongji.baidu.com/web/10000410967/overview/index?siteId=17411666)
