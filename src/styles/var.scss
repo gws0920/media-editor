@@ -1,0 +1,33 @@
+$primary: #409EFF;
+$success: #67C23A;
+$warning: #E6A23C;
+$error: #F56C6C;
+
+$text: #303133;
+$text-info: #606266;
+$text-disabled: #909399;
+$placeholder: #C0C4CC;
+
+$border: #DCDFE6;
+$border-lighter: #EBEEF5;
+
+$black: #000;
+$white: #FFF;
+
+:export {
+  primary: $primary;
+  success: $success;
+  warning: $warning;
+  error: $error;
+
+  text: $text;
+  textInfo: $text-info;
+  textDisabled: $text-disabled;
+  placeholder: $placeholder;
+
+  border: $border;
+  borderLighter: $border-lighter;
+
+  black: $black;
+  white: $white
+}
