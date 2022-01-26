@@ -2,9 +2,11 @@
 import Medias from '@/components/Editor/Medias.vue'
 import Monitor from '@/components/Editor/Monitor.vue'
 import Timeline from '@/components/Editor/Timeline.vue'
+import TitleBar from '@/components/Editor/TitleBar.vue'
 </script>
 
 <template>
+  <TitleBar/>
   <div class="editor">
     <Medias />
     <Monitor />
@@ -14,7 +16,7 @@ import Timeline from '@/components/Editor/Timeline.vue'
 
 <style lang="scss" scoped>
 .editor {
-  height: 100vh;
+  height: calc(100vh - 60px);
   width: 100vw;
   display: grid;
   grid-template-areas:

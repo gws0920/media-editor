@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import Editor from '@/pages/Editor.vue'
-import { NConfigProvider, NButton, NGlobalStyle } from 'naive-ui'
-
+import { ref } from 'vue'
+import { NConfigProvider, NGlobalStyle, useThemeVars } from 'naive-ui'
 import { useThemeStore } from '@/store/theme'
-const themeStore = useThemeStore()
-window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
-  themeStore.changeTheme(e.matches)
-})
 
+const themeVar = useThemeVars()
+const primaryColor = ref(themeVar.value.primaryColor)
+const themeStore = useThemeStore()
 </script>
 
 <template>
   <NConfigProvider :theme="themeStore.theme">
-    <div>
-      <NButton @click="themeStore.changeTheme()">{{themeStore.theme ? '浅色' : '深色'}}</NButton>
-    </div>
     <Editor />
     <NGlobalStyle />
   </NConfigProvider>
@@ -27,5 +23,16 @@ body {
 }
 nav ul ol {
   list-style: none;
+}
+// 图标通用样式
+.n-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: color .2s;
+  height: 100%;
+  &:hover {
+    color:  v-bind(primaryColor);
+  }
 }
 </style>

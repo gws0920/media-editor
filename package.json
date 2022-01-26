@@ -7,7 +7,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/mockjs": "^1.0.6",
     "@types/node": "^17.0.11",
+    "@vicons/carbon": "^0.11.0",
+    "mockjs": "^1.1.0",
     "naive-ui": "^2.24.5",
     "pinia": "^2.0.9",
     "vfonts": "^0.0.3",
