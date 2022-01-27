@@ -1,13 +1,22 @@
 import { defineStore } from 'pinia';
 import { Clip, Track } from '@/types'
 
-type ClipState = {
+export interface TimelineState {
   curClips: Set<Clip>
   curTracks: Set<Track>
 }
 
-export const useClipStore = defineStore('timeline', {
-  state: (): ClipState => ({
+export interface TimelineStore extends TimelineState {
+  addCurClip: (clip:Clip) => void
+  removeCurClip: (clip:Clip) => void
+  clearCurClip: () => void
+  addCurTracks: (track:Track) => void
+  removeCurTracks: (track:Track) => void
+  clearCurTracks: () => void
+}
+
+export const useTimelineStore = defineStore('timeline', {
+  state: (): TimelineState => ({
     curClips: new Set(),
     curTracks: new Set()
   }),
