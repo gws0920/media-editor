@@ -14,3 +14,7 @@ export type Track = {
   id: string,
   clips: Array<Clip>
 }
+
+export type Timeline = {
+  tracks: Track[]
+}

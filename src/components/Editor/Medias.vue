@@ -13,7 +13,6 @@ const data = {
 }
 const res = Mock.mock(data)
 const list = ref(res.data)
-console.log(list)
 
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Medias from '@/components/Editor/Medias.vue'
 import Monitor from '@/components/Editor/Monitor.vue'
-import Timeline from '@/components/Editor/Timeline.vue'
+import Timeline from '@/components/Timeline/Timeline.vue'
 import TitleBar from '@/components/Editor/TitleBar.vue'
 </script>
 
