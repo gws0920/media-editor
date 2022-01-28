@@ -9,6 +9,7 @@ export interface InteractiveState {
 export interface InteractiveStore extends InteractiveState {
   setTranslate: (translateX?: number, translateY?: number) => void
   setDragging: (isDragging: boolean) => void
+  setLevel: (level: number) => void
 }
 
 export const useInteractiveStore = defineStore('interactive', {
@@ -23,6 +24,9 @@ export const useInteractiveStore = defineStore('interactive', {
     },
     setTranslate(translateX?: number, translateY?: number) {
       this.translate = [translateX || 0, translateY || 0]
+    },
+    setLevel(level: number) {
+      this.level = level
     }
   }
 })

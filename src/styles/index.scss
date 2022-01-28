@@ -9,4 +9,8 @@
   &:hover {
     color: var(--primaryColor);
   }
+  &.disabled {
+    color: var(--iconColorDisabled);
+    cursor: default;
+  }
 }

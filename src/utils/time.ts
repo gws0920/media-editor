@@ -36,7 +36,7 @@ export function prefixZero(num: number | string, n = 2) {
  */
 export function us2px(us: number): number {
   const interactiveStore: InteractiveStore = useInteractiveStore()
-  const { STEP, TIME } = RULER_MAP[interactiveStore.level || 3]
+  const { STEP, TIME } = RULER_MAP[interactiveStore.level]
   return STEP / TIME * us
 }
 
@@ -45,6 +45,6 @@ export function us2px(us: number): number {
  */
 export function px2us(px: number): number {
   const interactiveStore: InteractiveStore = useInteractiveStore()
-  const { STEP, TIME } = RULER_MAP[interactiveStore.level || 3]
+  const { STEP, TIME } = RULER_MAP[interactiveStore.level]
   return ~~(TIME / STEP * px)
 }
