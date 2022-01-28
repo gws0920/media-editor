@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-import { px2us, us2px } from '@/utils'
+import { px2us, us2px, getClipThumbs } from '@/utils'
 import { useTimelineStore, TimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 interface Props {
@@ -16,6 +16,7 @@ const style = computed(() => {
   return {
     left: us2px(inPoint.value) + 'px',
     width: us2px(duration.value) + 'px',
+    background: getClipThumbs(clip.value).join(',')
   }
 })
 let [startX, startY] = [0, 0] // 拖拽开始时的位置
@@ -41,21 +42,24 @@ const changeSelected = (e?: MouseEvent) => {
   }
 }
 
-const mousedown = (e: MouseEvent) => {
+const pointerdown = (e: PointerEvent) => {
   startX = e.clientX
   startY = e.clientY
-  document.body.addEventListener('mousemove', mousemove)
-  document.body.addEventListener('mouseup', mouseup, { once: true })
+  document.body.addEventListener('pointermove', pointermove)
+  document.body.addEventListener('pointerup', pointerup, { once: true })
 }
-const mousemove = (e: MouseEvent) => {
+const pointermove = (e: PointerEvent) => {
   if (!timelineStore.curClips.has(props.clip)) {
     changeSelected(e)
   }
-  interactiveStore.setDragging(true)
-  interactiveStore.setTranslate(e.clientX - startX, e.clientY - startY)
+  if (Math.abs(e.clientX - startX) > 1 || Math.abs(e.clientY - startY) > 1) {
+    interactiveStore.setDragging(true)
+    interactiveStore.setTranslate(e.clientX - startX, e.clientY - startY)
+    document.body.setPointerCapture(e.pointerId)
+  }
 }
-const mouseup = (e: MouseEvent) => {
-  document.body.removeEventListener('mousemove', mousemove)
+const pointerup = (e: PointerEvent) => {
+  document.body.removeEventListener('pointermove', pointermove)
   interactiveStore.setDragging(false)
   // 修改inPoint
   const [dx, dy] = interactiveStore.translate
@@ -65,6 +69,7 @@ const mouseup = (e: MouseEvent) => {
     clip.outPoint += offsetUs
   })
   interactiveStore.setTranslate()
+  document.body.releasePointerCapture(e.pointerId)
 }
 
 </script>
@@ -76,7 +81,7 @@ const mouseup = (e: MouseEvent) => {
     :style="style"
     v-show="!(isSelected && interactiveStore.isDragging)"
     @click="changeSelected"
-    @mousedown="mousedown"
+    @pointerdown="pointerdown"
   >
     <p>{{ props.clip.name }}</p>
   </div>
@@ -84,10 +89,10 @@ const mouseup = (e: MouseEvent) => {
 
 <style scoped lang="scss">
 .clip {
-  height: calc(100% - 4px);
+  height: calc(100% - 2px);
   box-sizing: border-box;
-  border-radius: 4px;
-  border: 1px solid var(--borderColor);
+  border-radius: 3px;
+  border: 2px solid var(--borderColor);
   position: absolute;
   overflow: hidden;
   user-select: none;
@@ -102,6 +107,9 @@ const mouseup = (e: MouseEvent) => {
   &.active {
     border-color: var(--primaryColor);
     z-index: 100;
+    p {
+      color: var(--primaryColor);
+    }
   }
 }
 </style>

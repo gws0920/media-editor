@@ -4,7 +4,7 @@ export type Clip = {
   duration: number
   name: string
   id: string
-  thumbnail?: string,
+  thumbnail: string,
   trimOut: number,
   trimIn: number,
   speed?: number

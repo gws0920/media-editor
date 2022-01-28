@@ -21,7 +21,7 @@ const props = defineProps<{ tracks: iTrack[]}>()
 .track-container {
   grid-area: container;
   height: 100%;
-  max-height: calc(50vh - 120px);
+  max-height: calc(50vh - 125px);
   width: 100%;
   padding: 4px 0;
 }

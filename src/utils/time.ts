@@ -1,4 +1,6 @@
 import { FPS, RULER_MAP } from './const'
+import { useInteractiveStore, InteractiveStore } from "@/store/interactive";
+
 /**
  * 微秒 -> 时：分：秒：帧
  */
@@ -32,15 +34,17 @@ export function prefixZero(num: number | string, n = 2) {
 /**
  * us -> px
  */
-export function us2px(us: number, level?: number): number {
-  const { STEP, TIME } = RULER_MAP[level || 3]
+export function us2px(us: number): number {
+  const interactiveStore: InteractiveStore = useInteractiveStore()
+  const { STEP, TIME } = RULER_MAP[interactiveStore.level || 3]
   return STEP / TIME * us
 }
 
 /**
  * px -> us
  */
-export function px2us(px: number, level?: number): number {
-  const { STEP, TIME } = RULER_MAP[level || 3]
+export function px2us(px: number): number {
+  const interactiveStore: InteractiveStore = useInteractiveStore()
+  const { STEP, TIME } = RULER_MAP[interactiveStore.level || 3]
   return ~~(TIME / STEP * px)
 }

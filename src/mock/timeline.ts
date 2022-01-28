@@ -13,7 +13,7 @@ export function mockClips(clipLength: number | [number, number]) {
   const json = {
     [`data|${length}`]: [{
       "duration|1000000-20000000": 20000000,
-      "thumbnails": "@image(480x270, @color)",
+      "thumbnail": "https://dummyimage.com/480x270/#color#/FFFFFF&text=",
       "name": "@name",
       "id": "@guid"
     }]

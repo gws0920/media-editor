@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-import { px2us, us2px } from '@/utils';
-import { useScroll } from '@vueuse/core'
 
 interface Props {
   clip: Clip,
