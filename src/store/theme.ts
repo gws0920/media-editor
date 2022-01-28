@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import type { BuiltInGlobalTheme } from 'naive-ui/lib/themes/interface';
 import { darkTheme } from 'naive-ui'
-import { useLocalStorage } from '@vueuse/core'
 
 type themeStore = {
   theme: null | BuiltInGlobalTheme

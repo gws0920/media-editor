@@ -6,6 +6,7 @@ import TrackControls from './TrackControls.vue';
 import mockTimeline from '@/mock/timeline';
 import { ref } from 'vue'
 import { Timeline } from '@/types'
+import DraggingClips from './DraggingClips.vue'
 
 const timeline = ref<Timeline>(mockTimeline())
 
@@ -17,6 +18,7 @@ const timeline = ref<Timeline>(mockTimeline())
     <Ruler />
     <TrackControls :tracks="timeline.tracks" />
     <TrackContainer :tracks="timeline.tracks" />
+    <DraggingClips />
   </div>
 </template>
 
