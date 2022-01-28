@@ -7,7 +7,8 @@ export type Clip = {
   thumbnail: string,
   trimOut: number,
   trimIn: number,
-  speed?: number
+  speed?: number,
+  trackId: string
 }
 
 export type Track = {

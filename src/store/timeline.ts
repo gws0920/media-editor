@@ -1,7 +1,9 @@
+import { us2px } from '@/utils';
 import { defineStore } from 'pinia';
-import { Clip, Track } from '@/types'
-
+import { Clip, Track, Timeline } from '@/types'
+import mockTimeline from '@/mock/timeline';
 export interface TimelineState {
+  tlData: Timeline
   curClips: Set<Clip>
   curTracks: Set<Track>
   isDragging: boolean
@@ -15,10 +17,13 @@ export interface TimelineStore extends TimelineState {
   removeCurTracks: (track:Track) => void
   clearCurTracks: () => void
   setDragging: (isDragging: boolean) => void
+  getSings: () => [number, number][]
+  getMinMax: () => [number, number]
 }
 
 export const useTimelineStore = defineStore('timeline', {
   state: (): TimelineState => ({
+    tlData: mockTimeline(),
     curClips: new Set(),
     curTracks: new Set(),
     isDragging: false
@@ -45,6 +50,36 @@ export const useTimelineStore = defineStore('timeline', {
     },
     clearCurTracks() {
       this.curTracks.clear()
+    },
+
+    /**
+     * 获取吸附点, 不关联滚动条位置！ TODO: 目前是全量计算
+     * @returns [[point, px], [point, px]]所有的吸附点，point表示时刻，px表示位置
+     */
+    getSings():[number, number][] {
+      const { tracks } = this.tlData
+      const sings = new Map()
+      tracks.forEach(track => {
+        track.clips.forEach(clip => {
+          if (!this.curClips.has(clip)) {
+            sings.set(clip.inPoint, us2px(clip.inPoint))
+            sings.set(clip.outPoint, us2px(clip.outPoint))
+          }
+        })
+      });
+      return [...sings.entries()]
+    },
+    /**
+     * 获取选中的clip中，最大、最小的point
+     */
+    getMinMax() {
+      let res: [number, number] = [Infinity, -Infinity]
+      this.curClips.forEach(clip => {
+        const [min, max] = res
+        if (clip.inPoint < min) res[0] = clip.inPoint
+        if (clip.outPoint > max) res[1] = clip.outPoint
+      })
+      return res
     }
   }
 })

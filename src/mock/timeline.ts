@@ -3,7 +3,7 @@ import { Clip } from '@/types'
 import Mock from 'mockjs'
 
 
-export function mockClips(clipLength: number | [number, number]) {
+export function mockClips(clipLength: number | [number, number], trackId: string) {
   let length = 0
   if (Array.isArray(clipLength)) {
     let [min, max] = clipLength
@@ -14,7 +14,7 @@ export function mockClips(clipLength: number | [number, number]) {
     [`data|${length}`]: [{
       "duration|1000000-20000000": 20000000,
       "thumbnail": "https://dummyimage.com/480x270/#color#/FFFFFF&text=",
-      "name": "@name",
+      "name": "@ctitle(3,15)",
       "id": "@guid"
     }]
   }
@@ -24,6 +24,7 @@ export function mockClips(clipLength: number | [number, number]) {
      const c = {
        ...clip,
        inPoint,
+       trackId,
        outPoint: inPoint + clip.duration
      }
      inPoint += clip.duration
@@ -33,15 +34,16 @@ export function mockClips(clipLength: number | [number, number]) {
 export function mockTracks(trackLength: number, clipLength: number | [number, number]) {
   const tracks = []
   for (let i = 0; i < trackLength; i++) {
+    const id = guid()
     tracks.push({
-      id: guid(),
-      clips: mockClips(clipLength)
+      id,
+      clips: mockClips(clipLength, id)
     })
   }
   return tracks
 }
 
-export default function mockTimeline(trackLength:number = 5, clipLength: number | [number, number] = [4,8]) {
+export default function mockTimeline(trackLength:number = 3, clipLength: number | [number, number] = [3, 18]) {
   return {
     tracks: mockTracks(trackLength, clipLength)
   }

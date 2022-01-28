@@ -3,12 +3,8 @@ import ToolsBar from './ToolsBar.vue'
 import Ruler from './Ruler.vue'
 import TrackContainer from './TrackContainer.vue';
 import TrackControls from './TrackControls.vue';
-import mockTimeline from '@/mock/timeline';
-import { ref } from 'vue'
-import { Timeline } from '@/types'
 import DraggingClips from './DraggingClips.vue'
 
-const timeline = ref<Timeline>(mockTimeline())
 
 </script>
 
@@ -16,8 +12,8 @@ const timeline = ref<Timeline>(mockTimeline())
   <div class="timeline">
     <ToolsBar />
     <Ruler />
-    <TrackControls :tracks="timeline.tracks" />
-    <TrackContainer :tracks="timeline.tracks" />
+    <TrackControls />
+    <TrackContainer />
     <DraggingClips />
   </div>
 </template>

@@ -52,9 +52,11 @@ const pointermove = (e: PointerEvent) => {
   if (!timelineStore.curClips.has(props.clip)) {
     changeSelected(e)
   }
-  if (Math.abs(e.clientX - startX) > 1 || Math.abs(e.clientY - startY) > 1) {
+  const targetX = e.clientX - startX
+  const targetY = e.clientY - startY
+  if (Math.abs(targetX) > 1 || Math.abs(targetY) > 1) {
     interactiveStore.setDragging(true)
-    interactiveStore.setTranslate(e.clientX - startX, e.clientY - startY)
+    interactiveStore.setTranslate(e.clientX - startX, e.clientY - startY) // 内部把吸附效果也做了
     document.body.setPointerCapture(e.pointerId)
   }
 }
@@ -68,7 +70,6 @@ const pointerup = (e: PointerEvent) => {
     clip.inPoint += offsetUs
     clip.outPoint += offsetUs
   })
-  interactiveStore.setTranslate()
   document.body.releasePointerCapture(e.pointerId)
 }
 

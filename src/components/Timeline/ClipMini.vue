@@ -32,8 +32,8 @@ const style = ref({
 .clip-mini {
   position: fixed;
   box-sizing: border-box;
-  border-radius: 4px;
-  border: 1px solid var(--primaryColor);
+  border-radius: 3px;
+  border: 2px solid var(--primaryColor);
   overflow: hidden;
   user-select: none;
   cursor: pointer;
@@ -42,6 +42,7 @@ const style = ref({
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 4px 8px;
+    color: var(--primaryColor);
   }
 }
 </style>
