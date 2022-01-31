@@ -19,6 +19,7 @@ export interface TimelineStore extends TimelineState {
   setDragging: (isDragging: boolean) => void
   getSings: () => [number, number][]
   getMinMax: () => [number, number]
+  moveCurClips: (offset: number) => void
 }
 
 export const useTimelineStore = defineStore('timeline', {
@@ -54,7 +55,7 @@ export const useTimelineStore = defineStore('timeline', {
 
     /**
      * 获取吸附点, 不关联滚动条位置！ TODO: 目前是全量计算
-     * @returns [[point, px], [point, px]]所有的吸附点，point表示时刻，px表示位置
+     * @returns [[us, px], [us, px]]所有的吸附点，point表示时刻，px表示位置
      */
     getSings():[number, number][] {
       const { tracks } = this.tlData
@@ -80,6 +81,13 @@ export const useTimelineStore = defineStore('timeline', {
         if (clip.outPoint > max) res[1] = clip.outPoint
       })
       return res
+    },
+    // 移动当前选中的clips
+    moveCurClips(offset: number) {
+      this.curClips.forEach(clip => {
+        clip.inPoint += offset
+        clip.outPoint += offset
+      })
     }
   }
 })
