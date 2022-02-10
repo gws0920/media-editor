@@ -9,6 +9,6 @@ export const RULER_MAP = [
   { STEP: 16, TIME: 6000000, GROUP: 10 },
 ]
 export const VIDEO_TRACK_HEIGHT = 60
-export const OTHER_TRACK_HEIGHT = 60
+export const OTHER_TRACK_HEIGHT = 40
 export const TRACK_MARGIN = 2 // 轨道之间的间隙
 export const COLORS = ['9a79f2', '7999f2','f2d879', '79f2b4']

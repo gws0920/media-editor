@@ -20,11 +20,12 @@ export interface TimelineStore extends TimelineState {
   getSings: () => [number, number][]
   getMinMax: () => [number, number]
   moveCurClips: (offset: number) => void
+  isSameTrack: () => boolean
 }
 
 export const useTimelineStore = defineStore('timeline', {
   state: (): TimelineState => ({
-    tlData: mockTimeline(),
+    tlData: mockTimeline(8),
     curClips: new Set(),
     curTracks: new Set(),
     isDragging: false
@@ -81,6 +82,10 @@ export const useTimelineStore = defineStore('timeline', {
         if (clip.outPoint > max) res[1] = clip.outPoint
       })
       return res
+    },
+    // 当前选中的clip是否为同轨道
+    isSameTrack():boolean {
+      return [...this.curClips].every((clip, _, arr) => clip.trackId === arr[0].trackId)
     },
     // 移动当前选中的clips
     moveCurClips(offset: number) {

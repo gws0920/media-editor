@@ -1,0 +1,20 @@
+export enum TRACK_TYPE {
+  VIDEO = 'VIDEO_TRACK',
+  AUDIO = 'AUDIO_TRACK',
+  CAPTION = 'CAPTION_TRACK',
+  STICKER = 'STICKER_TRACK',
+}
+
+export enum CLIP_TYPE {
+  VIDEO = 'VIDEO',
+  AUDIO = 'AUDIO',
+  CAPTION = 'CAPTION',
+  STICKER = 'STICKER'
+}
+
+export enum CLIP_BACKGROUND_COLOR {
+  AUDIO = 'rgb(38, 113, 128)',
+  CAPTION = '#9c76f5',
+  FX = '#6b6fe5',
+  STICKER = '#6b6fe5'
+}

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Clip from './Clip.vue'
 import { Track } from '@/types'
-import { VIDEO_TRACK_HEIGHT, OTHER_TRACK_HEIGHT, TRACK_MARGIN } from '@/utils'
+import { VIDEO_TRACK_HEIGHT, OTHER_TRACK_HEIGHT, TRACK_MARGIN, TRACK_TYPE } from '@/utils'
 const props = defineProps<{track: Track}>()
-const HEIGHT = VIDEO_TRACK_HEIGHT + 'px'
+const HEIGHT = (props.track.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT) + 'px'
 </script>
 
 <template>

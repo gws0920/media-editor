@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import { ref, computed, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-import { px2us, us2px, getClipThumbs } from '@/utils'
+import { px2us, us2px, getClipThumbs, VIDEO_TRACK_HEIGHT, CLIP_TYPE, CLIP_BACKGROUND_COLOR, TRACK_TYPE, OTHER_TRACK_HEIGHT } from '@/utils'
 import { useTimelineStore, TimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 interface Props {
   clip: Clip
 }
+
 const props = defineProps<Props>()
 const timelineStore: TimelineStore = useTimelineStore()
 const interactiveStore: InteractiveStore = useInteractiveStore()
 const style = computed(() => {
   const { clip } = toRefs(props)
   const { inPoint, duration } = toRefs(clip.value)
+  const background = clip.value.type === CLIP_TYPE.VIDEO ? getClipThumbs(clip.value).join(',') : CLIP_BACKGROUND_COLOR[clip.value.type]
   return {
     left: us2px(inPoint.value) + 'px',
     width: us2px(duration.value) + 'px',
-    background: getClipThumbs(clip.value).join(',')
+    background
   }
 })
 let [startX, startY] = [0, 0] // 拖拽开始时的位置
+const scrollContainer = document.querySelector('.track-container .n-scrollbar-content')
 
 const isSelected = computed(() => timelineStore.curClips.has(props.clip))
 const classes = computed(() => {
   return {
     clip: true,
+    'center-clip': ![CLIP_TYPE.VIDEO, CLIP_TYPE.AUDIO].includes(props.clip.type), // 文字居中的clip
     active: isSelected.value
   }
 })
@@ -42,12 +46,15 @@ const changeSelected = (e?: MouseEvent) => {
   }
 }
 
+// 拖拽开始
 const pointerdown = (e: PointerEvent) => {
   startX = e.clientX
   startY = e.clientY
   document.body.addEventListener('pointermove', pointermove)
   document.body.addEventListener('pointerup', pointerup, { once: true })
 }
+
+// 拖拽中
 const pointermove = (e: PointerEvent) => {
   if (!timelineStore.curClips.has(props.clip)) {
     changeSelected(e)
@@ -55,22 +62,93 @@ const pointermove = (e: PointerEvent) => {
   const targetX = e.clientX - startX
   const targetY = e.clientY - startY
   if (Math.abs(targetX) > 1 || Math.abs(targetY) > 1) {
-    interactiveStore.setDragging(true)
-    interactiveStore.setTranslate(e.clientX - startX, e.clientY - startY) // 内部把吸附效果也做了
+    if (!interactiveStore.isDragging) {
+      interactiveStore.setDragging(true)
+      interactiveStore.sings = timelineStore.getSings()
+    }
+    const minMax = timelineStore.getMinMax()
+    const [translateX, translateY] = [e.clientX - startX, e.clientY - startY]
+    interactiveStore.setTranslate(
+      computedTranslateX(translateX || 0, minMax),
+      computerTranslateY(translateY || 0)
+    )
     document.body.setPointerCapture(e.pointerId)
   }
 }
+// 计算X方向吸附效果
+const computedTranslateX = (translateX: number, minMax: [number, number]): number => {
+  const [min, max] = minMax
+  let x = translateX
+  // 先比较左侧对齐
+  const targetLeft = us2px(min) + translateX
+  const singXL = interactiveStore.sings.find(([us, px]) => Math.abs(px - targetLeft) < 5)
+  console.log(scrollContainer?.scrollLeft);
+  
+  if (singXL) {
+    // 有吸附！左侧
+    interactiveStore.lineY = { show: true, pos: singXL[1] + (scrollContainer?.scrollLeft || 0) }
+    x = singXL[1] - us2px(min) - 0 // 减去滚动条位置
+    interactiveStore.moveOffset = singXL[0] - min
+  } else {
+    // 再比较右侧对齐
+    const targetRight = us2px(max) + translateX
+    const singXR = interactiveStore.sings.find(([us, px]) => Math.abs(px - targetRight) < 5)
+    if (singXR) {
+      // 有吸附 右侧
+      interactiveStore.lineY = { show: true, pos: singXR[1] + (scrollContainer?.scrollLeft || 0) }
+      x = singXR[1] - us2px(max) - 0 // 减去滚动条位置
+      interactiveStore.moveOffset = singXR[0] - max
+    } else {
+      interactiveStore.lineY = { show: false, pos: 0 }
+      interactiveStore.moveOffset = px2us(x)
+    }
+  }
+  return x
+}
+// 计算Y方向吸附效果
+const computerTranslateY = (translateY: number): number => {
+  if (!timelineStore.isSameTrack()) return 0 // 多选状态下，只有同轨clip可以跨轨拖拽
+  const curClipsTrackId = [...timelineStore.curClips][0].trackId // 当前选中clip 所处的轨道id
+  const curClipTrack = timelineStore.tlData.tracks.find(track => track.id === curClipsTrackId)
+  let target = false // 是否遇到自身所处的轨道
+  const trackHeight = curClipTrack?.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT // 轨道高度
+
+  let minY = -trackHeight / 2, maxY = -trackHeight / 2 // 上下吸附的区间px
+  timelineStore.tlData.tracks.forEach(track => {
+    if (track.id === curClipsTrackId) target = true
+
+    if(track.type === curClipTrack?.type) {
+      target ? (maxY += trackHeight) : (minY -= trackHeight)
+    }
+  })
+
+  if (translateY >= minY && translateY <= maxY) {
+    const resultY = Math.round(translateY / (trackHeight / 2)) * (trackHeight / 2)
+    console.log(resultY);
+    if (resultY % trackHeight === 0) {
+      // 隐藏对齐线
+      interactiveStore.lineX = { show: false, pos: 0 }
+    } else {
+      interactiveStore.lineX = { show: true, pos: resultY }
+      console.log('show');
+    }
+    return resultY
+  }
+
+  return translateY
+}
+
+// 拖拽结束
 const pointerup = (e: PointerEvent) => {
   document.body.removeEventListener('pointermove', pointermove)
-  interactiveStore.setDragging(false)
-  // 修改inPoint
-  const [dx, dy] = interactiveStore.translate
-  const offsetUs = px2us(dx)
-  timelineStore.curClips.forEach(clip => {
-    clip.inPoint += offsetUs
-    clip.outPoint += offsetUs
-  })
   document.body.releasePointerCapture(e.pointerId)
+
+  interactiveStore.sings = []
+  interactiveStore.setDragging(false)
+  // timelineStore 修改实际的时间线内容
+  timelineStore.moveCurClips(interactiveStore.moveOffset)
+  interactiveStore.setTranslate() // 复位
+ 
 }
 
 </script>
@@ -104,13 +182,17 @@ const pointerup = (e: PointerEvent) => {
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 4px 8px;
+    font-size: 13px;
+    color: white;
+  }
+  &.center-clip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &.active {
     border-color: var(--primaryColor);
     z-index: 100;
-    p {
-      color: var(--primaryColor);
-    }
   }
 }
 </style>

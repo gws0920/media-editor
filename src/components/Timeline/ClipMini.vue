@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-
+import { CLIP_TYPE } from '@/utils'
 interface Props {
   clip: Clip,
   style?: StyleSheet
@@ -23,7 +23,12 @@ const style = ref({
 </script>
 
 <template>
-  <div class="clip-mini" :id="'mini-' + props.clip.id" :style="style">
+  <div
+   :class="{
+    'clip-mini': true,
+    'center-clip': ![CLIP_TYPE.VIDEO, CLIP_TYPE.AUDIO].includes(props.clip.type), // 文字居中的clip
+    }"
+    :id="'mini-' + props.clip.id" :style="style">
     <p>{{props.clip.name}}</p>
   </div>
 </template>
@@ -42,7 +47,14 @@ const style = ref({
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 4px 8px;
-    color: var(--primaryColor);
+    font-size: 13px;
+    color: white;
+    // color: var(--primaryColor);
+  }
+  &.center-clip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
