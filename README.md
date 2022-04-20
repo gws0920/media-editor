@@ -52,5 +52,6 @@ import { NIcon } from 'naive-ui'
 ## Bugs
 目前已知bug
 - [ ] 选中片段后，点击片段会发生片段移动
-- [x]
+- [ ] 拖拽非视频轨道的clip，对齐线不准
+- [x] c
 

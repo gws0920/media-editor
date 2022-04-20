@@ -5,7 +5,7 @@ import Track from './Track.vue'
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from '@/store/interactive'
 import { useScroll } from "@vueuse/core";
-import { OTHER_TRACK_HEIGHT, TRACK_TYPE, VIDEO_TRACK_HEIGHT } from '@/utils'
+import { OTHER_TRACK_HEIGHT, TRACK_TYPE, VIDEO_TRACK_HEIGHT, TRACK_MARGIN } from '@/utils'
 const timelineStore: TimelineStore = useTimelineStore()
 const interactiveStore: InteractiveStore = useInteractiveStore()
 
@@ -39,7 +39,7 @@ const lineYStyle = computed(() => ({
     <div
       class="line-x"
       v-if="interactiveStore.lineX.show"
-      :style="{ transform: `translateY(${interactiveStore.lineX.pos}px)` }"
+      :style="{ transform: `translateY(${interactiveStore.lineX.pos + TRACK_MARGIN}px)` }"
     ></div>
   </div>
 </template>
