@@ -5,6 +5,7 @@ import Track from './Track.vue'
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from '@/store/interactive'
 import { useScroll } from "@vueuse/core";
+import { OTHER_TRACK_HEIGHT, TRACK_TYPE, VIDEO_TRACK_HEIGHT } from '@/utils'
 const timelineStore: TimelineStore = useTimelineStore()
 const interactiveStore: InteractiveStore = useInteractiveStore()
 
@@ -15,20 +16,29 @@ console.log(el.value, x.value);
 watchEffect(() => {
   console.log(x.value);
 })
-
+const lineYStyle = computed(() => ({
+  transform: `translateX(${interactiveStore.lineY.pos}px)`,
+  left: -x + 'px',
+  height: timelineStore.tlData.tracks.reduce((sum, item) => {
+    if (item.type === TRACK_TYPE.VIDEO) sum += VIDEO_TRACK_HEIGHT
+    else sum += OTHER_TRACK_HEIGHT
+    return sum
+  }, 0) + 'px'
+}))
 </script>
 
 <template>
   <div class="track-container" ref="el">
     <Track v-for="track in timelineStore.tlData.tracks" :key="track.id" :track="track" />
+    <!-- 对齐线 -->
     <div
       class="line-y"
-      v-if="interactiveStore.lineY.show || true"
-      :style="{ transform: `translateX(${interactiveStore.lineY.pos}px)`, left: -x + 'px' }"
+      v-if="interactiveStore.lineY.show"
+      :style="lineYStyle"
     ></div>
     <div
       class="line-x"
-      v-if="interactiveStore.lineX.show || true"
+      v-if="interactiveStore.lineX.show"
       :style="{ transform: `translateY(${interactiveStore.lineX.pos}px)` }"
     ></div>
   </div>
@@ -72,10 +82,9 @@ watchEffect(() => {
   &-y {
     position: absolute;
     left: 0;
-    bottom: 0;
+    top: 0;
     width: 0px;
     border: 1px dashed var(--primaryColor);
-    height: calc(50vh - 120px);
     box-sizing: border-box;
   }
   &-x {

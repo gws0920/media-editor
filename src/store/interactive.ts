@@ -39,6 +39,7 @@ export const useInteractiveStore = defineStore('interactive', {
       this.isDragging = !!isDragging
       if(!isDragging) {
         this.lineY = { show: false, pos: 0 } // 去除对齐线
+        this.lineX = { show: false, pos: 0 } // 去除对齐线
       }
     },
     setTranslate(translateX?: number, translateY?: number) {

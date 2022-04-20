@@ -110,6 +110,7 @@ const computerTranslateY = (translateY: number): number => {
   if (!timelineStore.isSameTrack()) return 0 // 多选状态下，只有同轨clip可以跨轨拖拽
   const curClipsTrackId = [...timelineStore.curClips][0].trackId // 当前选中clip 所处的轨道id
   const curClipTrack = timelineStore.tlData.tracks.find(track => track.id === curClipsTrackId)
+  const curTrackIndex = curClipTrack ? timelineStore.tlData.tracks.indexOf(curClipTrack) : -1
   let target = false // 是否遇到自身所处的轨道
   const trackHeight = curClipTrack?.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT // 轨道高度
 
@@ -129,7 +130,10 @@ const computerTranslateY = (translateY: number): number => {
       // 隐藏对齐线
       interactiveStore.lineX = { show: false, pos: 0 }
     } else {
-      interactiveStore.lineX = { show: true, pos: resultY }
+      interactiveStore.lineX = {
+        show: true,
+        pos: resultY + trackHeight * (0.5 + curTrackIndex) - (scrollContainer?.scrollTop || 0)
+      }
       console.log('show');
     }
     return resultY
@@ -148,7 +152,6 @@ const pointerup = (e: PointerEvent) => {
   // timelineStore 修改实际的时间线内容
   timelineStore.moveCurClips(interactiveStore.moveOffset)
   interactiveStore.setTranslate() // 复位
- 
 }
 
 </script>
