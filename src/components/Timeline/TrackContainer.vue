@@ -11,10 +11,9 @@ const interactiveStore: InteractiveStore = useInteractiveStore()
 
 const el = ref<HTMLElement | null>(null)
 const { x, y } = useScroll(el)
-console.log(el.value, x.value);
 
 watchEffect(() => {
-  console.log(x.value);
+  // console.log(x.value);
 })
 const lineYStyle = computed(() => ({
   transform: `translateX(${interactiveStore.lineY.pos}px)`,
