@@ -49,11 +49,11 @@ import { NIcon } from 'naive-ui'
 ## TODO:
 ### 22.4.21
 短期内将要做的内容
-1. 片段跨轨道拖拽
-2. 片段拖拽碰撞覆盖
-3. 片段入出点设置
-4. 时间轴 `Ruler.vue`
-5. 轨道控制器 `trackControls.vue`
+- [ ] 片段跨轨道拖拽
+- [ ] 片段拖拽碰撞覆盖
+- [ ] 片段入出点设置
+- [x] 时间轴 `Ruler.vue`
+- [ ] 轨道控制器 `trackControls.vue`
 ## Bugs
 目前已知bug
 - [ ] 选中片段后，点击片段会发生片段移动
