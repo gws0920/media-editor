@@ -3,11 +3,13 @@
 .n-icon {
   display: flex;
   align-items: center;
-  cursor: pointer;
   transition: color .2s;
   height: 100%;
-  &:hover {
-    color: var(--primaryColor);
+  &:not(.default) {
+    cursor: pointer;
+    &:hover {
+      color: var(--primaryColor);
+    }
   }
   &.disabled {
     color: var(--iconColorDisabled);

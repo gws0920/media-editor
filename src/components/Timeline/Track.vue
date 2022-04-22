@@ -7,7 +7,7 @@ const HEIGHT = (props.track.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTH
 </script>
 
 <template>
-  <div class="track">
+  <div :class="['track', track.show ? '' : 'hidden']">
     <Clip
       v-for="clip in props.track.clips"
       :key="clip.id"
@@ -22,5 +22,9 @@ const HEIGHT = (props.track.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTH
   display: flex;
   position: relative;
   box-sizing: border-box;
+  transition: opacity .3s;
+  &.hidden {
+    opacity: .4;
+  }
 }
 </style>

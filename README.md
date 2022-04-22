@@ -49,14 +49,8 @@ import { NIcon } from 'naive-ui'
 ## TODO:
 ### 22.4.21
 短期内将要做的内容
-- [ ] 片段跨轨道拖拽
+- [x] 片段跨轨道拖拽
 - [ ] 片段拖拽碰撞覆盖
 - [ ] 片段入出点设置
 - [x] 时间轴 `Ruler.vue`
-- [ ] 轨道控制器 `trackControls.vue`
-## Bugs
-目前已知bug
-- [ ] 选中片段后，点击片段会发生片段移动
-- [ ] 拖拽非视频轨道的clip，对齐线不准
-- [x] c
-
+- [x] 轨道控制器 `trackControls.vue`

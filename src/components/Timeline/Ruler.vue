@@ -23,7 +23,7 @@ function draw() {
   ctx.font = '14px monospace'
   while (x < offsetWidth) {
     const isGroup = ((x + containerEl.scrollLeft) / STEP) % GROUP === 0
-    ctx.moveTo(x, offsetHeight / (isGroup ? 2 : 1.5))
+    ctx.moveTo(x, offsetHeight / (isGroup ? 1.8 : 1.2))
     ctx.lineTo(x, offsetHeight)
     if (isGroup) {
       const text = us2FrameTime(px2us(x + containerEl.scrollLeft))

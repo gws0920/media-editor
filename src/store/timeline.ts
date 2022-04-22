@@ -26,7 +26,7 @@ export interface TimelineStore extends TimelineState {
 
 export const useTimelineStore = defineStore('timeline', {
   state: (): TimelineState => ({
-    tlData: mockTimeline(),
+    tlData: mockTimeline(8),
     curClips: new Set(),
     curTracks: new Set(),
     isDragging: false

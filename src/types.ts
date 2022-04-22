@@ -16,7 +16,9 @@ export type Clip = {
 
 export interface Track {
   id: string,
-  type: TRACK_TYPE
+  type: TRACK_TYPE,
+  show: boolean
+  volume: number
   clips: Array<Clip>
 }
 

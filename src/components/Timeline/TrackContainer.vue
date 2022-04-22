@@ -24,10 +24,18 @@ const lineYStyle = computed(() => ({
     return sum
   }, 0) + 'px'
 }))
+
+const onScroll = (e:Event) => {
+  if (!e.target) return
+  const dom = e.target
+  const scrollTop = (<HTMLDivElement>dom).scrollTop
+  const controls = document.querySelector('.track-controls')
+  controls && (controls.scrollTop = scrollTop)
+}
 </script>
 
 <template>
-  <div class="track-container" ref="el">
+  <div class="track-container" ref="el" @scroll="onScroll">
     <Track v-for="track in timelineStore.tlData.tracks" :key="track.id" :track="track" />
     <!-- 对齐线 -->
     <div

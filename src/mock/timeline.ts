@@ -68,6 +68,8 @@ export function mockTracks(trackLength: number, clipLength: number | [number, nu
     tracks.push({
       id,
       type: TRACK_TYPE.VIDEO,
+      show: true,
+      volume: 1,
       clips: mockClips(clipLength, id)
     })
   }
@@ -77,6 +79,7 @@ export function mockTracks(trackLength: number, clipLength: number | [number, nu
   tracks.push({
     id: id2,
     type: TRACK_TYPE.STICKER,
+    show: true,
     clips: mockCaptions(clipLength, id2, CLIP_TYPE.STICKER)
   })
 
@@ -85,6 +88,7 @@ export function mockTracks(trackLength: number, clipLength: number | [number, nu
   tracks.push({
     id,
     type: TRACK_TYPE.CAPTION,
+    show: true,
     clips: mockCaptions(clipLength, id, CLIP_TYPE.CAPTION)
   })
   return tracks

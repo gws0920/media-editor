@@ -4,11 +4,15 @@ import { guid, TRACK_TYPE, CLIP_TYPE } from '@/utils'
 export class Track {
   id: string
   type: TRACK_TYPE
+  show: boolean
+  volume: number
   clips: C[]
   constructor (type: TRACK_TYPE) {
     this.id = guid()
     this.type = type
     this.clips = []
+    this.volume = 1
+    this.show = true
   }
 }
 
