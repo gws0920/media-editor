@@ -20,17 +20,11 @@ const switchShow = (track: Track) => {
 const changeVolume = (track: Track, volume:number) => {
   track.volume = volume
 }
-const onScroll = (e:Event) => {
-  if (!e.target) return
-  const dom = e.target
-  const scrollTop = (<HTMLDivElement>dom).scrollTop
-  const container = document.querySelector('.track-container')
-  container && (container.scrollTop = scrollTop)
-}
+
 </script>
 
 <template>
-  <div class="track-controls" @scroll="onScroll">
+  <div class="track-controls">
     <NSpace
       class="control"
       :style="getStyle(track)"
@@ -65,11 +59,8 @@ const onScroll = (e:Event) => {
 .track-controls {
   grid-area: controls;
   max-height: calc(50vh - 120px);
-  overflow: auto;
   padding: 4px 0;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow: hidden;
   .control {
     border-bottom: 1px solid transparent;
     padding: 0 4px;

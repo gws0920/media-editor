@@ -172,7 +172,7 @@ const pointerup = (e: PointerEvent) => {
     :id="props.clip.id"
     :style="style"
     v-show="!(isSelected && interactiveStore.isDragging)"
-    @click="changeSelected"
+    @click.stop="changeSelected"
     @pointerdown="pointerdown"
   >
     <p>{{ props.clip.name }}</p>

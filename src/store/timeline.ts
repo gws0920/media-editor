@@ -22,6 +22,7 @@ export interface TimelineStore extends TimelineState {
   getMinMax: () => [number, number]
   moveCurClips: (offsetUs: number, offsetYPx: number) => void
   isSameTrack: () => boolean
+  deleteCurClips: () => void
 }
 
 export const useTimelineStore = defineStore('timeline', {
@@ -104,7 +105,6 @@ export const useTimelineStore = defineStore('timeline', {
       if (!offsetY) return
       // 不同类型的clip不支持多选跨轨道
       const trackHeight = this.getCurClipType() === CLIP_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT
-      console.log(offsetY)
       console.log('移动到别的轨道')
       const indexDiff = offsetY / trackHeight // 向上/下移动几条轨道
       this.curClips.forEach(clip => {
@@ -136,6 +136,7 @@ export const useTimelineStore = defineStore('timeline', {
         const index = track.clips.indexOf(clip)
         track.clips.splice(index, 1)
       })
+      this.curClips.clear()
       return deleted
     },
     /**

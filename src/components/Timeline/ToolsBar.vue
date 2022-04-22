@@ -3,8 +3,10 @@ import { computed } from 'vue'
 import { Undo, Redo, Delete, Cut, AddAlt, SubtractAlt, FitToScreen, SplitScreen } from '@vicons/carbon'
 import { NIcon, NSpace, NDivider, NSlider } from 'naive-ui'
 import { InteractiveStore, useInteractiveStore } from "@/store/interactive"
+import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { RULER_MAP } from '@/utils'
 const interactiveStore: InteractiveStore = useInteractiveStore()
+const timelineStore: TimelineStore = useTimelineStore()
 const level = computed({
   get() {
     return interactiveStore.level
@@ -18,6 +20,12 @@ const changeLevel = (flag: number) => {
   targetLevel = Math.max(0, targetLevel)
   targetLevel = Math.min(RULER_MAP.length - 1, targetLevel)
   interactiveStore.setLevel(targetLevel)
+}
+const hasSelection = computed(() => {
+  return timelineStore.curClips.size > 0
+})
+const deleteCurClips = () => {
+  timelineStore.deleteCurClips()
 }
 </script>
 
@@ -33,7 +41,7 @@ const changeLevel = (flag: number) => {
           <Redo />
         </NIcon>
         <NDivider vertical />
-        <NIcon :size="18" class="icon" title="删除">
+        <NIcon :size="18" :class="{disabled: !hasSelection}" title="删除" @click="deleteCurClips">
           <Delete />
         </NIcon>
         <NIcon :size="18" class="icon" title="切割">

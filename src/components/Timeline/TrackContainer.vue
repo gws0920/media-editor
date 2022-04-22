@@ -35,7 +35,7 @@ const onScroll = (e:Event) => {
 </script>
 
 <template>
-  <div class="track-container" ref="el" @scroll="onScroll">
+  <div class="track-container" ref="el" @scroll="onScroll"  @click="timelineStore.clearCurClip">
     <Track v-for="track in timelineStore.tlData.tracks" :key="track.id" :track="track" />
     <!-- 对齐线 -->
     <div
