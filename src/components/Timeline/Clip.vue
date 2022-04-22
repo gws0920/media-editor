@@ -22,7 +22,7 @@ const style = computed(() => {
   }
 })
 let [startX, startY] = [0, 0] // 拖拽开始时的位置
-const scrollContainer = document.querySelector('.track-container .n-scrollbar-content')
+const scrollContainer = document.querySelector('.track-container')
 
 const isSelected = computed(() => timelineStore.curClips.has(props.clip))
 const classes = computed(() => {
@@ -66,6 +66,7 @@ const pointermove = (e: PointerEvent) => {
       interactiveStore.setDragging(true)
       interactiveStore.sings = timelineStore.getSings()
     }
+    // 获取选中clip入出点
     const minMax = timelineStore.getMinMax()
     const [translateX, translateY] = [e.clientX - startX, e.clientY - startY]
     interactiveStore.setTranslate(
@@ -82,7 +83,6 @@ const computedTranslateX = (translateX: number, minMax: [number, number]): numbe
   // 先比较左侧对齐
   const targetLeft = us2px(min) + translateX
   const singXL = interactiveStore.sings.find(([us, px]) => Math.abs(px - targetLeft) < 5)
-  console.log(scrollContainer?.scrollLeft);
   
   if (singXL) {
     // 有吸附！左侧
@@ -108,33 +108,38 @@ const computedTranslateX = (translateX: number, minMax: [number, number]): numbe
 // 计算Y方向吸附效果
 const computerTranslateY = (translateY: number): number => {
   if (!timelineStore.isSameTrack()) return 0 // 多选状态下，只有同轨clip可以跨轨拖拽
+  const tracks = timelineStore.tlData.tracks
   const curClipsTrackId = [...timelineStore.curClips][0].trackId // 当前选中clip 所处的轨道id
-  const curClipTrack = timelineStore.tlData.tracks.find(track => track.id === curClipsTrackId)
-  const curTrackIndex = curClipTrack ? timelineStore.tlData.tracks.indexOf(curClipTrack) : -1
+  const curClipTrack = tracks.find(track => track.id === curClipsTrackId)
+  const curTrackIndex = curClipTrack ? tracks.indexOf(curClipTrack) : -1
   let target = false // 是否遇到自身所处的轨道
   const trackHeight = curClipTrack?.type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT // 轨道高度
 
+  // 计算该类型轨道 所处的位置范围
   let minY = -trackHeight / 2, maxY = -trackHeight / 2 // 上下吸附的区间px
-  timelineStore.tlData.tracks.forEach(track => {
+  tracks.forEach(track => {
     if (track.id === curClipsTrackId) target = true
-
     if(track.type === curClipTrack?.type) {
       target ? (maxY += trackHeight) : (minY -= trackHeight)
     }
   })
 
+  
   if (translateY >= minY && translateY <= maxY) {
     const resultY = Math.round(translateY / (trackHeight / 2)) * (trackHeight / 2)
-    console.log(resultY);
     if (resultY % trackHeight === 0) {
       // 隐藏对齐线
       interactiveStore.lineX = { show: false, pos: 0 }
     } else {
+      // 当前规定本身做处的位置Y
+      const oldY = tracks.reduce((h, { type }, index) => {
+        if (index < curTrackIndex) return h + (type === TRACK_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT)
+        return h
+      }, 0)
       interactiveStore.lineX = {
         show: true,
-        pos: resultY + trackHeight * (0.5 + curTrackIndex) - (scrollContainer?.scrollTop || 0)
+        pos: resultY + oldY + trackHeight / 2 - (scrollContainer?.scrollTop || 0)
       }
-      console.log('show');
     }
     return resultY
   }
@@ -151,6 +156,7 @@ const pointerup = (e: PointerEvent) => {
   interactiveStore.setDragging(false)
   // timelineStore 修改实际的时间线内容
   timelineStore.moveCurClips(interactiveStore.moveOffset)
+  interactiveStore.moveOffset = 0
   interactiveStore.setTranslate() // 复位
 }
 

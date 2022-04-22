@@ -1,5 +1,5 @@
-import { Clip } from "@/types";
-import { us2px, px2us, VIDEO_TRACK_HEIGHT, COLORS } from "@/utils";
+import { Clip } from "@/types"
+import { us2px, px2us, VIDEO_TRACK_HEIGHT, COLORS } from "@/utils"
 
 export const getClipThumbs = (clip: Clip) => {
   const { trimIn, trimOut, speed, duration, thumbnail, inPoint, outPoint } = clip
