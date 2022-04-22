@@ -14,7 +14,7 @@ export type Clip = {
   type: CLIP_TYPE
 }
 
-export type Track = {
+export interface Track {
   id: string,
   type: TRACK_TYPE
   clips: Array<Clip>

@@ -124,12 +124,13 @@ const computerTranslateY = (translateY: number): number => {
     }
   })
 
-  
+  // 在同类轨道区间内拖拽
   if (translateY >= minY && translateY <= maxY) {
     const resultY = Math.round(translateY / (trackHeight / 2)) * (trackHeight / 2)
     if (resultY % trackHeight === 0) {
       // 隐藏对齐线
       interactiveStore.lineX = { show: false, pos: 0 }
+      interactiveStore.moveOffsetY = resultY
     } else {
       // 当前规定本身做处的位置Y
       const oldY = tracks.reduce((h, { type }, index) => {
@@ -138,8 +139,9 @@ const computerTranslateY = (translateY: number): number => {
       }, 0)
       interactiveStore.lineX = {
         show: true,
-        pos: resultY + oldY + trackHeight / 2 - (scrollContainer?.scrollTop || 0)
+        pos: resultY + oldY + trackHeight / 2
       }
+      interactiveStore.moveOffsetY = resultY
     }
     return resultY
   }
@@ -155,8 +157,10 @@ const pointerup = (e: PointerEvent) => {
   interactiveStore.sings = []
   interactiveStore.setDragging(false)
   // timelineStore 修改实际的时间线内容
-  timelineStore.moveCurClips(interactiveStore.moveOffset)
-  interactiveStore.moveOffset = 0
+  const {moveOffset, moveOffsetY} = interactiveStore
+  timelineStore.moveCurClips(moveOffset, moveOffsetY)
+  // interactiveStore.moveOffset = 0
+  // interactiveStore.moveOffsetY = 0
   interactiveStore.setTranslate() // 复位
 }
 
