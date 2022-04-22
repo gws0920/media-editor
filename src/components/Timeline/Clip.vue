@@ -159,8 +159,8 @@ const pointerup = (e: PointerEvent) => {
   // timelineStore 修改实际的时间线内容
   const {moveOffset, moveOffsetY} = interactiveStore
   timelineStore.moveCurClips(moveOffset, moveOffsetY)
-  // interactiveStore.moveOffset = 0
-  // interactiveStore.moveOffsetY = 0
+  interactiveStore.moveOffset = 0
+  interactiveStore.moveOffsetY = 0
   interactiveStore.setTranslate() // 复位
 }
 
