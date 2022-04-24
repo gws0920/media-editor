@@ -1,5 +1,5 @@
 import { us2px, CLIP_TYPE, OTHER_TRACK_HEIGHT, VIDEO_TRACK_HEIGHT, TRACK_TYPE } from '@/utils'
-import { Track as TrackClass } from '@/utils/classes'
+import { Track as TrackClass, Clip as ClipClass } from '@/utils/classes'
 import { defineStore } from 'pinia'
 import { Clip, Track, Timeline } from '@/types'
 import mockTimeline from '@/mock/timeline'
@@ -27,7 +27,7 @@ export interface TimelineStore extends TimelineState {
 
 export const useTimelineStore = defineStore('timeline', {
   state: (): TimelineState => ({
-    tlData: mockTimeline(8),
+    tlData: mockTimeline(3),
     curClips: new Set(),
     curTracks: new Set(),
     isDragging: false
@@ -102,7 +102,6 @@ export const useTimelineStore = defineStore('timeline', {
         clip.outPoint += Math.max(-clip.inPoint, offsetUs)
         clip.inPoint += Math.max(-clip.inPoint, offsetUs)
       })
-      if (!offsetY) return
       // 不同类型的clip不支持多选跨轨道
       const trackHeight = this.getCurClipType() === CLIP_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT
       const indexDiff = offsetY / trackHeight // 向上/下移动几条轨道
@@ -118,10 +117,12 @@ export const useTimelineStore = defineStore('timeline', {
           this.tlData.tracks.splice(oldTrackIndex + indexDiff + 0.5, 0, newTrack)
         }
         clips.forEach((clip:Clip) => {
+          // 旧轨道删除
           const index = oldTrack.clips.indexOf(clip)
           oldTrack.clips.splice(index, 1)
+          // 新轨道插入
           clip.trackId = newTrack.id
-          newTrack.clips.push(clip)
+          this.insertClip(newTrack, clip)
         })
 
       }
@@ -173,6 +174,59 @@ export const useTimelineStore = defineStore('timeline', {
           this.tlData.tracks.splice(i, 1)
           i--
         }
+      }
+    },
+    /**
+     * 在轨道中插入clip
+     * 1. 碰撞检测
+     * 2. 保证按inPoint顺序
+     */
+    insertClip(track:Track, clip:Clip) {
+      let i = track.clips.length
+      for (let index = 0; index < track.clips.length; index++) {
+        const { inPoint } = track.clips[index];
+        if (inPoint >= clip.inPoint) {
+          i = index
+          break
+        }
+      }
+      track.clips.splice(i, 0, clip)
+    
+      const { inPoint: targetIn, outPoint: targetOut } = clip
+      // 左侧碰撞检测
+      let pointL = i - 1
+      while(pointL >= 0) {
+        const c = track.clips[pointL]
+        const { outPoint, trimOut, thumbnail } = c
+        if (outPoint > targetOut) { // 放到了一个clip上面，下面的clip被截断
+          c.outPoint = targetIn
+          const newClip = new ClipClass(c.type)
+          newClip.trackId = track.id
+          newClip.inPoint = targetOut
+          newClip.outPoint = outPoint
+          newClip.trimOut = trimOut
+          newClip.thumbnail = thumbnail
+          newClip.trimIn = trimOut - (outPoint - targetOut) // TODO: 有变速呢
+          track.clips.splice(i + 1, 0, newClip)
+          break
+        } else if (outPoint > targetIn) { // 有部分交叉
+          c.outPoint = targetIn
+          break
+        } else break
+      }
+      // 右侧碰撞检测
+      let pointR = i + 1
+      while (pointR < track.clips.length) {
+        const c = track.clips[pointR]
+        const { inPoint, outPoint } = c
+        if (inPoint < targetOut) { // 有交叉
+          if (outPoint <= targetOut) { // 完全被覆盖了
+            track.clips.splice(pointR, 1)
+          } else { // 有交叉部分
+            c.inPoint = targetOut
+            break
+          }
+        } else break
       }
     }
   }

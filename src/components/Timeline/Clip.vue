@@ -6,6 +6,7 @@ import { useTimelineStore, TimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 interface Props {
   clip: Clip
+  index: number
 }
 
 const props = defineProps<Props>()
@@ -13,11 +14,11 @@ const timelineStore: TimelineStore = useTimelineStore()
 const interactiveStore: InteractiveStore = useInteractiveStore()
 const style = computed(() => {
   const { clip } = toRefs(props)
-  const { inPoint, duration } = toRefs(clip.value)
+  const { inPoint, outPoint } = toRefs(clip.value)
   const background = clip.value.type === CLIP_TYPE.VIDEO ? getClipThumbs(clip.value).join(',') : CLIP_BACKGROUND_COLOR[clip.value.type]
   return {
     left: us2px(inPoint.value) + 'px',
-    width: us2px(duration.value) + 'px',
+    width: us2px(outPoint.value - inPoint.value) + 'px',
     background
   }
 })
