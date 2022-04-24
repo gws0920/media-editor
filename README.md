@@ -1,6 +1,11 @@
 # Media Editor
 ## 前言
 这是个练手项目，用来熟悉Vue3/TypeScript/vite. 很多东西都在摸索中前进。
+## 演示
+- [github-page](https://gws0920.github.io/media-editor/)
+## 仓库
+- [github](https://github.com/gws0920/media-editor)
+- [gitee](https://gitee.com/Gws9/media-editor)
 ## 安装
 ```
 yarn
@@ -41,11 +46,6 @@ import { NIcon } from 'naive-ui'
     const color = useCssVar('--color', document.body)
   ```
 
-## 仓库
-- [github](https://github.com/gws0920/media-editor)
-- [gitee](https://gitee.com/Gws9/media-editor)
-## 演示
-- [github-page](https://gws0920.github.io/media-editor/)
 ## TODO:
 ### 22.4.21
 短期内将要做的内容
