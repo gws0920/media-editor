@@ -105,14 +105,10 @@ export const useTimelineStore = defineStore('timeline', {
       if (!offsetY) return
       // 不同类型的clip不支持多选跨轨道
       const trackHeight = this.getCurClipType() === CLIP_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT
-      console.log('移动到别的轨道')
       const indexDiff = offsetY / trackHeight // 向上/下移动几条轨道
-      this.curClips.forEach(clip => {
-        const oldTrack = this.getTrackFromClip(clip)
-        if (!oldTrack) throw new Error('No track found')
+      const clipMap = this.getCurClipGroup() // 将clip根据所在轨道进行分组
+      for (let [oldTrack, clips] of clipMap) {
         const oldTrackIndex = this.tlData.tracks.indexOf(oldTrack)
-        const index = oldTrack.clips.indexOf(clip)
-        oldTrack.clips.splice(index, 1)
         let newTrack: Track
         if (offsetY % trackHeight === 0) {
           // 移动到别的轨道
@@ -121,10 +117,32 @@ export const useTimelineStore = defineStore('timeline', {
           newTrack = new TrackClass(oldTrack.type)
           this.tlData.tracks.splice(oldTrackIndex + indexDiff + 0.5, 0, newTrack)
         }
-        clip.trackId = newTrack.id
-        newTrack.clips.push(clip)
-      })
+        clips.forEach((clip:Clip) => {
+          const index = oldTrack.clips.indexOf(clip)
+          oldTrack.clips.splice(index, 1)
+          clip.trackId = newTrack.id
+          newTrack.clips.push(clip)
+        })
+
+      }
       this.clearTrackWithNoClip()
+    },
+    /**
+     * 将clip根据所在轨道进行分组
+     * @returns {Map} 键: Track, 值: [clips]
+     */
+    getCurClipGroup() {
+      const group:Map<Track, Clip[]> = new Map()
+      this.curClips.forEach(clip => {
+        const track = this.getTrackFromClip(clip)
+        if (!track) throw new Error('为找到所在轨道')
+        if (group.has(track)) {
+          group.get(track)?.push(clip)
+        } else {
+          group.set(track, [clip])
+        }
+      })
+      return group
     },
     // 删除选中的clip
     deleteCurClips() {
@@ -144,7 +162,7 @@ export const useTimelineStore = defineStore('timeline', {
      * @param clip 
      * @returns { track, index } 所处的轨道， clip在轨道中的索引
      */
-    getTrackFromClip(clip: Clip) {
+    getTrackFromClip(clip: Clip):Track|undefined {
       return this.tlData.tracks.find(t => t.id === clip.trackId)
     },
     // 清理没有clip的轨道
