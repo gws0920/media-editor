@@ -113,7 +113,7 @@ export const useTimelineStore = defineStore('timeline', {
           // 移动到别的轨道
           newTrack = this.tlData.tracks[oldTrackIndex + indexDiff]
         } else {
-          newTrack = new TrackClass(oldTrack.type)
+          newTrack = new TrackClass({ type: oldTrack.type})
           this.tlData.tracks.splice(oldTrackIndex + indexDiff + 0.5, 0, newTrack)
         }
         clips.forEach((clip:Clip) => {
@@ -200,13 +200,15 @@ export const useTimelineStore = defineStore('timeline', {
         const { outPoint, trimOut, thumbnail } = c
         if (outPoint > targetOut) { // 放到了一个clip上面，下面的clip被截断
           c.outPoint = targetIn
-          const newClip = new ClipClass(c.type)
-          newClip.trackId = track.id
-          newClip.inPoint = targetOut
-          newClip.outPoint = outPoint
-          newClip.trimOut = trimOut
-          newClip.thumbnail = thumbnail
-          newClip.trimIn = trimOut - (outPoint - targetOut) // TODO: 有变速呢
+          const newClip = new ClipClass({
+            type: c.type,
+            trackId: track.id,
+            inPoint: targetOut,
+            outPoint,
+            trimOut,
+            thumbnail,
+            trimIn: trimOut - (outPoint - targetOut) // TODO: 有变速呢
+          })
           track.clips.splice(i + 1, 0, newClip)
           break
         } else if (outPoint > targetIn) { // 有部分交叉
