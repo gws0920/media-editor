@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, ref } from 'vue'
 import { Clip } from '@/types'
 import { NIcon } from 'naive-ui'
 import { Column } from '@vicons/carbon'
@@ -26,8 +26,10 @@ const style = computed(() => {
 })
 let [startX, startY] = [0, 0] // 拖拽开始时的位置
 let [startInPoint, startOutPoint] = [props.clip.inPoint, props.clip.outPoint]
+const isTrimInDragging = ref(false)
+const isTrimOutDragging = ref(false)
 const scrollContainer = document.querySelector('.track-container')
-
+let sings:[us: number, px: number][] = []
 const isSelected = computed(() => timelineStore.curClips.has(props.clip))
 const classes = computed(() => {
   return {
@@ -173,36 +175,56 @@ const trimInPointerdown = (e:PointerEvent) => {
   startX = e.clientX
   startInPoint = props.clip.inPoint
   document.body.addEventListener('pointermove', trimInPointermove)
-  document.body.addEventListener('pointerup', trimInPointerup, { once: true})
+  document.body.addEventListener('pointerup', e => trimPointerup(e, trimInPointermove), { once: true})
+  isTrimInDragging.value = true
+  sings = timelineStore.getSings()
+  document.body.style.cursor = 'col-resize'
 }
 const trimInPointermove = (e:PointerEvent) => {
   document.body.setPointerCapture(e.pointerId)
-  const diff = e.clientX - startX
-  const diffDuration = px2us(diff)
-  props.clip.inPoint = range(diffDuration + startInPoint, [0, props.clip.outPoint])
-}
-const trimInPointerup = (e:PointerEvent) => {
-  document.body.removeEventListener('pointermove', trimInPointermove)
-  document.body.releasePointerCapture(e.pointerId)
-  timelineStore.moveCurClips(0, 0)
+  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - 140)) < 5 && us <= props.clip.outPoint)
+  if (sing) {
+    const [us, px] = sing
+    props.clip.inPoint = range(us, [0, props.clip.outPoint])
+    interactiveStore.lineY = { show: true, pos: px + (scrollContainer?.scrollLeft || 0) }
+  } else {
+    const diff = e.clientX - startX
+    const diffDuration = px2us(diff)
+    props.clip.inPoint = range(diffDuration + startInPoint, [0, props.clip.outPoint])
+    interactiveStore.lineY = { show: false, pos: 0 }
+  }
 }
 
 const trimOutPointerdown = (e:PointerEvent) => {
   startX = e.clientX
   startOutPoint = props.clip.outPoint
   document.body.addEventListener('pointermove', trimOutPointermove)
-  document.body.addEventListener('pointerup', trimOutPointerup, { once: true})
+  document.body.addEventListener('pointerup', e => trimPointerup(e, trimOutPointermove), { once: true})
+  isTrimOutDragging.value = true
+  sings = timelineStore.getSings()
 }
 const trimOutPointermove = (e:PointerEvent) => {
   document.body.setPointerCapture(e.pointerId)
-  const diff = e.clientX - startX
-  const diffDuration = px2us(diff)
-  props.clip.outPoint = range(diffDuration + startOutPoint, [props.clip.inPoint, Infinity])
+  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - 140)) < 5 && us >= props.clip.inPoint)
+  if (sing) {
+    const [us, px] = sing
+    props.clip.outPoint = range(us, [props.clip.inPoint, Infinity])
+    interactiveStore.lineY = { show: true, pos: px + (scrollContainer?.scrollLeft || 0) }
+  } else {
+    const diff = e.clientX - startX
+    const diffDuration = px2us(diff)
+    props.clip.outPoint = range(diffDuration + startOutPoint, [props.clip.inPoint, Infinity])
+    interactiveStore.lineY = { show: false, pos: 0 }
+  }
 }
-const trimOutPointerup = (e:PointerEvent) => {
-  document.body.removeEventListener('pointermove', trimOutPointermove)
+const trimPointerup = (e:PointerEvent, fn:(e: PointerEvent) => void) => {
+  document.body.removeEventListener('pointermove', fn)
   document.body.releasePointerCapture(e.pointerId)
   timelineStore.moveCurClips(0, 0)
+  isTrimOutDragging.value = false
+  isTrimInDragging.value = false
+  interactiveStore.lineY = { show: false, pos: 0 }
+  document.body.style.cursor = 'default'
 }
 </script>
 
@@ -216,13 +238,13 @@ const trimOutPointerup = (e:PointerEvent) => {
     @pointerdown="pointerdown"
   >
     <div class="left tagger" v-if="isSelected">
-      <NIcon class="left handle" @pointerdown.stop="trimInPointerdown">
+      <NIcon :class="['left', 'handle', isTrimInDragging ? 'dragging' : '']" @pointerdown.stop="trimInPointerdown">
         <Column />
       </NIcon>
     </div>
     <p>{{ props.clip.name }}</p>
     <div class="right tagger" v-if="isSelected">
-      <NIcon class="right handle" @pointerdown.stop="trimOutPointerdown">
+      <NIcon :class="['right', 'handle', isTrimOutDragging ? 'dragging' : '']" @pointerdown.stop="trimOutPointerdown">
         <Column />
       </NIcon>
     </div>
@@ -291,6 +313,9 @@ const trimOutPointerup = (e:PointerEvent) => {
     &.right {
       right: 0;
       transform: translate(50%, -50%);
+    }
+    &.dragging {
+      opacity: 1;
     }
   }
 }
