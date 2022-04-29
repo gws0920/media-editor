@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-import { px2us, us2px, getClipThumbs, VIDEO_TRACK_HEIGHT, CLIP_TYPE, CLIP_BACKGROUND_COLOR, TRACK_TYPE, OTHER_TRACK_HEIGHT } from '@/utils'
+import { NIcon } from 'naive-ui'
+import { Column } from '@vicons/carbon'
+import { px2us, us2px, getClipThumbs, VIDEO_TRACK_HEIGHT, CLIP_TYPE, CLIP_BACKGROUND_COLOR, TRACK_TYPE, OTHER_TRACK_HEIGHT, range } from '@/utils'
 import { useTimelineStore, TimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 interface Props {
@@ -23,6 +25,7 @@ const style = computed(() => {
   }
 })
 let [startX, startY] = [0, 0] // 拖拽开始时的位置
+let [startInPoint, startOutPoint] = [props.clip.inPoint, props.clip.outPoint]
 const scrollContainer = document.querySelector('.track-container')
 
 const isSelected = computed(() => timelineStore.curClips.has(props.clip))
@@ -165,6 +168,42 @@ const pointerup = (e: PointerEvent) => {
   interactiveStore.setTranslate() // 复位
 }
 
+// Trim拖拽
+const trimInPointerdown = (e:PointerEvent) => {
+  startX = e.clientX
+  startInPoint = props.clip.inPoint
+  document.body.addEventListener('pointermove', trimInPointermove)
+  document.body.addEventListener('pointerup', trimInPointerup, { once: true})
+}
+const trimInPointermove = (e:PointerEvent) => {
+  document.body.setPointerCapture(e.pointerId)
+  const diff = e.clientX - startX
+  const diffDuration = px2us(diff)
+  props.clip.inPoint = range(diffDuration + startInPoint, [0, props.clip.outPoint])
+}
+const trimInPointerup = (e:PointerEvent) => {
+  document.body.removeEventListener('pointermove', trimInPointermove)
+  document.body.releasePointerCapture(e.pointerId)
+  timelineStore.moveCurClips(0, 0)
+}
+
+const trimOutPointerdown = (e:PointerEvent) => {
+  startX = e.clientX
+  startOutPoint = props.clip.outPoint
+  document.body.addEventListener('pointermove', trimOutPointermove)
+  document.body.addEventListener('pointerup', trimOutPointerup, { once: true})
+}
+const trimOutPointermove = (e:PointerEvent) => {
+  document.body.setPointerCapture(e.pointerId)
+  const diff = e.clientX - startX
+  const diffDuration = px2us(diff)
+  props.clip.outPoint = range(diffDuration + startOutPoint, [props.clip.inPoint, Infinity])
+}
+const trimOutPointerup = (e:PointerEvent) => {
+  document.body.removeEventListener('pointermove', trimOutPointermove)
+  document.body.releasePointerCapture(e.pointerId)
+  timelineStore.moveCurClips(0, 0)
+}
 </script>
 
 <template>
@@ -176,7 +215,17 @@ const pointerup = (e: PointerEvent) => {
     @click.stop="changeSelected"
     @pointerdown="pointerdown"
   >
+    <div class="left tagger" v-if="isSelected">
+      <NIcon class="left handle" @pointerdown.stop="trimInPointerdown">
+        <Column />
+      </NIcon>
+    </div>
     <p>{{ props.clip.name }}</p>
+    <div class="right tagger" v-if="isSelected">
+      <NIcon class="right handle" @pointerdown.stop="trimOutPointerdown">
+        <Column />
+      </NIcon>
+    </div>
   </div>
 </template>
 
@@ -187,7 +236,7 @@ const pointerup = (e: PointerEvent) => {
   border-radius: 3px;
   border: 2px solid var(--borderColor);
   position: absolute;
-  overflow: hidden;
+  // overflow: hidden;
   user-select: none;
   cursor: pointer;
   transition: border-color 0.2s;
@@ -207,6 +256,42 @@ const pointerup = (e: PointerEvent) => {
   &.active {
     border-color: var(--primaryColor);
     z-index: 100;
+  }
+  .tagger {
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    &:hover {
+      .handle {
+        opacity: 1;
+      }
+    }
+    &.left {
+      left: 0;
+    }
+    &.right {
+      right: 0;
+    }
+  }
+  .handle {
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    background-color: var(--textColorBase);
+    color: var(--tagColor);
+    border-radius: 4px;
+    height: 30px;
+    transition: opacity 0.3s;
+    cursor: col-resize;
+    &.left {
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+    &.right {
+      right: 0;
+      transform: translate(50%, -50%);
+    }
   }
 }
 </style>

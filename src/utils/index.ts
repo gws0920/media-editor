@@ -8,3 +8,7 @@ export function guid() {
   }
   return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4())
 }
+
+export function range(val:number, [min, max]:[number, number]) {
+  return Math.min(max, Math.max(min, val))
+}
