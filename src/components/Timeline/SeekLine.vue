@@ -31,7 +31,7 @@ const style = computed(() => {
     content: '';
     position: absolute;
     width: 10px;
-    height: 14px;
+    height: 10px;
     transform: translateX(-50%);
     background-color: var(--textColorBase);
     left: 0;
@@ -44,7 +44,7 @@ const style = computed(() => {
     border: 5px solid transparent;
     border-top-color: var(--textColorBase);
     position: absolute;
-    top: 14px;
+    top: 10px;
     transform: translateX(-50%);
   }
 }

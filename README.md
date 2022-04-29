@@ -54,4 +54,5 @@ import { NIcon } from 'naive-ui'
 - [x] 片段入出点设置
 - [x] 时间轴 `Ruler.vue`
 - [x] 轨道控制器 `trackControls.vue`
+- [x] 添加时码线
 - [ ] 片段 从媒体库添加到轨道上
