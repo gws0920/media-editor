@@ -4,6 +4,7 @@ import Ruler from './Ruler.vue'
 import TrackContainer from './TrackContainer.vue';
 import TrackControls from './TrackControls.vue';
 import DraggingClips from './DraggingClips.vue'
+import SeekLine from './SeekLine.vue'
 
 
 </script>
@@ -15,13 +16,16 @@ import DraggingClips from './DraggingClips.vue'
     <TrackControls />
     <TrackContainer />
     <DraggingClips />
+    <SeekLine></SeekLine>
   </div>
 </template>
 
 <style scoped lang="scss">
 .timeline {
+  position: relative;
   grid-area: timeline;
   display: grid;
+  overflow: hidden;
   grid-template-areas:
     "tools tools"
     "- ruler"

@@ -8,6 +8,7 @@ export interface TimelineState {
   curClips: Set<Clip>
   curTracks: Set<Track>
   isDragging: boolean
+  seekVal: number
 }
 
 export interface TimelineStore extends TimelineState {
@@ -30,7 +31,8 @@ export const useTimelineStore = defineStore('timeline', {
     tlData: mockTimeline(3),
     curClips: new Set(),
     curTracks: new Set(),
-    isDragging: false
+    isDragging: false,
+    seekVal: 0
   }),
   actions: {
     setDragging(isDragging: boolean) {

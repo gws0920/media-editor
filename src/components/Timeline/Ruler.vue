@@ -3,7 +3,10 @@ import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { useCssVar } from '@vueuse/core'
 import { RULER_MAP, px2us, us2FrameTime } from '@/utils'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
+import { TimelineStore, useTimelineStore } from '@/store/timeline'
+
 const interactiveStore: InteractiveStore = useInteractiveStore()
+const timelineStore:TimelineStore = useTimelineStore()
 
 const canvas = ref<HTMLCanvasElement|null>(null)
 const color = useCssVar('--textColorBase', document.body)
@@ -20,14 +23,14 @@ function draw() {
   ctx.beginPath()
   ctx.strokeStyle = color.value
   ctx.fillStyle = color.value
-  ctx.font = '14px monospace'
+  ctx.font = '13px monospace'
   while (x < offsetWidth) {
     const isGroup = ((x + containerEl.scrollLeft) / STEP) % GROUP === 0
-    ctx.moveTo(x, offsetHeight / (isGroup ? 1.8 : 1.2))
+    ctx.moveTo(x, offsetHeight / (isGroup ? 1.5 : 1.1))
     ctx.lineTo(x, offsetHeight)
     if (isGroup) {
       const text = us2FrameTime(px2us(x + containerEl.scrollLeft))
-      ctx.fillText(text, x - 39, 15)
+      ctx.fillText(text, x - 39, 24)
     }
     x += STEP
   }
@@ -47,11 +50,16 @@ onMounted(() => {
   draw()
 })
 watch(interactiveStore, () => draw())
-
+const seekTimeline = (e:MouseEvent) => {
+  const containerEl:HTMLDivElement|null = document.querySelector('.track-container')
+  if (!containerEl) return
+  const pos = e.offsetX + containerEl.scrollLeft
+  timelineStore.seekVal = px2us(pos)
+}
 </script>
 
 <template>
-  <canvas ref="canvas" />
+  <canvas ref="canvas" @click="seekTimeline" />
 </template>
 
 <style scoped lang="scss">
