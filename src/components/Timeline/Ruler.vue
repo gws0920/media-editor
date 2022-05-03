@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { useCssVar } from '@vueuse/core'
-import { RULER_MAP, px2us, us2FrameTime } from '@/utils'
+import { RULER_MAP, px2us, us2FrameTime, TRACK_CONTROL_WIDTH } from '@/utils'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 
@@ -53,13 +53,25 @@ watch(interactiveStore, () => draw())
 const seekTimeline = (e:MouseEvent) => {
   const containerEl:HTMLDivElement|null = document.querySelector('.track-container')
   if (!containerEl) return
-  const pos = e.offsetX + containerEl.scrollLeft
+  const pos = (e.clientX - TRACK_CONTROL_WIDTH) + containerEl.scrollLeft
   timelineStore.seekVal = px2us(pos)
+}
+const pointerdown = (e:PointerEvent) => {
+  document.body.addEventListener('pointermove', pointermove)
+  document.body.addEventListener('pointerup', () => {
+    document.body.removeEventListener('pointermove', pointermove)
+  }, {once: true})
+}
+const pointermove = (e:PointerEvent) => {
+  const containerEl:HTMLDivElement|null = document.querySelector('.track-container')
+  if (!containerEl) return
+  const pos = (e.clientX - TRACK_CONTROL_WIDTH) + containerEl.scrollLeft
+  timelineStore.seekVal = Math.max(0, px2us(pos))
 }
 </script>
 
 <template>
-  <canvas ref="canvas" @click="seekTimeline" />
+  <canvas ref="canvas" @click="seekTimeline"  @pointerdown="pointerdown" />
 </template>
 
 <style scoped lang="scss">

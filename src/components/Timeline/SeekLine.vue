@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { us2px } from '@/utils'
+import { computed, ref, onMounted } from 'vue'
+import { us2px, TRACK_CONTROL_WIDTH } from '@/utils'
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { useScroll } from "@vueuse/core";
 const timelineStore:TimelineStore = useTimelineStore()
-const containerEl:HTMLDivElement|null = document.querySelector('.track-container')
+const containerEl = ref<HTMLDivElement|null>(null)
+const CONTROL_WIDTH = ref(TRACK_CONTROL_WIDTH + 'px')
 const { x, y } = useScroll(containerEl)
 const style = computed(() => {
   const pos = us2px(timelineStore.seekVal)
@@ -12,6 +13,9 @@ const style = computed(() => {
   return {
     transform: `translate(${v < 0 ? -200 : v}px)`
   }
+})
+onMounted(() => {
+  containerEl.value = document.querySelector('.track-container')
 })
 </script>
 
@@ -24,7 +28,7 @@ const style = computed(() => {
   position: absolute;
   width: 1px;
   height: calc(100% - 42px);
-  left: 140px;
+  left: v-bind(CONTROL_WIDTH);
   top: 42px;
   background-color: var(--textColorBase);
   &::after {

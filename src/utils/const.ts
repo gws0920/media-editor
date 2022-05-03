@@ -10,5 +10,6 @@ export const RULER_MAP = [
 ]
 export const VIDEO_TRACK_HEIGHT = 60
 export const OTHER_TRACK_HEIGHT = 40
+export const TRACK_CONTROL_WIDTH = 140
 export const TRACK_MARGIN = 2 // 轨道之间的间隙
 export const COLORS = ['79a4f2', '79f2da', 'f29f79', 'f2d879', '79f2b4']

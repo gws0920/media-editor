@@ -3,7 +3,7 @@ import { computed, toRefs, ref } from 'vue'
 import { Clip } from '@/types'
 import { NIcon } from 'naive-ui'
 import { Column } from '@vicons/carbon'
-import { px2us, us2px, getClipThumbs, VIDEO_TRACK_HEIGHT, CLIP_TYPE, CLIP_BACKGROUND_COLOR, TRACK_TYPE, OTHER_TRACK_HEIGHT, range } from '@/utils'
+import { px2us, us2px, getClipThumbs, VIDEO_TRACK_HEIGHT, CLIP_TYPE, CLIP_BACKGROUND_COLOR, TRACK_TYPE, OTHER_TRACK_HEIGHT, range, TRACK_CONTROL_WIDTH } from '@/utils'
 import { useTimelineStore, TimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from "@/store/interactive"
 interface Props {
@@ -182,7 +182,7 @@ const trimInPointerdown = (e:PointerEvent) => {
 }
 const trimInPointermove = (e:PointerEvent) => {
   document.body.setPointerCapture(e.pointerId)
-  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - 140)) < 5 && us <= props.clip.outPoint)
+  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - TRACK_CONTROL_WIDTH)) < 5 && us <= props.clip.outPoint)
   if (sing) {
     const [us, px] = sing
     props.clip.inPoint = range(us, [0, props.clip.outPoint])
@@ -205,7 +205,7 @@ const trimOutPointerdown = (e:PointerEvent) => {
 }
 const trimOutPointermove = (e:PointerEvent) => {
   document.body.setPointerCapture(e.pointerId)
-  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - 140)) < 5 && us >= props.clip.inPoint)
+  const sing = sings.find(([us, px]) => Math.abs(px - (e.clientX - TRACK_CONTROL_WIDTH)) < 5 && us >= props.clip.inPoint)
   if (sing) {
     const [us, px] = sing
     props.clip.outPoint = range(us, [props.clip.inPoint, Infinity])

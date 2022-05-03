@@ -5,7 +5,9 @@ import TrackContainer from './TrackContainer.vue';
 import TrackControls from './TrackControls.vue';
 import DraggingClips from './DraggingClips.vue'
 import SeekLine from './SeekLine.vue'
-
+import { TRACK_CONTROL_WIDTH } from '@/utils';
+import { ref } from 'vue'
+const CONTROL_WIDTH = ref(TRACK_CONTROL_WIDTH + 'px')
 
 </script>
 
@@ -31,6 +33,6 @@ import SeekLine from './SeekLine.vue'
     "- ruler"
     "controls container";
   grid-template-rows: 42px 45px auto;
-  grid-template-columns: 140px auto;
+  grid-template-columns: v-bind(CONTROL_WIDTH) auto;
 }
 </style>

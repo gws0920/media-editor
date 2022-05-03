@@ -5,7 +5,8 @@ import Track from './Track.vue'
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { useInteractiveStore, InteractiveStore } from '@/store/interactive'
 import { useScroll } from "@vueuse/core";
-import { OTHER_TRACK_HEIGHT, TRACK_TYPE, VIDEO_TRACK_HEIGHT, TRACK_MARGIN } from '@/utils'
+import { OTHER_TRACK_HEIGHT, TRACK_TYPE, VIDEO_TRACK_HEIGHT, TRACK_MARGIN, TRACK_CONTROL_WIDTH } from '@/utils'
+const CONTROL_WIDTH = ref(TRACK_CONTROL_WIDTH + 'px')
 const timelineStore: TimelineStore = useTimelineStore()
 const interactiveStore: InteractiveStore = useInteractiveStore()
 
@@ -55,8 +56,8 @@ const onScroll = (e:Event) => {
 .track-container {
   grid-area: container;
   position: relative;
-  height: calc(50vh - 120px);
-  width: calc(100vw - 140px);
+  height: calc(50vh - 126px);
+  width: calc(100vw - v-bind(CONTROL_WIDTH));
   padding: 4px 0;
   overflow: auto;
 
