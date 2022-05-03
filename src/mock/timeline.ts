@@ -95,6 +95,7 @@ export function mockTracks(trackLength: number, clipLength: number | [number, nu
 
 export default function mockTimeline(trackLength:number = 3, clipLength: number | [number, number] = [3, 18]):Timeline {
   return {
-    tracks: mockTracks(trackLength, clipLength)
+    tracks: mockTracks(trackLength, clipLength),
+    speed: 1
   }
 }

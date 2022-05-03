@@ -56,7 +56,7 @@ const onScroll = (e:Event) => {
 .track-container {
   grid-area: container;
   position: relative;
-  height: calc(50vh - 126px);
+  height: calc(55vh - 156px);
   width: calc(100vw - v-bind(CONTROL_WIDTH));
   padding: 4px 0;
   overflow: auto;

@@ -24,6 +24,7 @@ const CONTROL_WIDTH = ref(TRACK_CONTROL_WIDTH + 'px')
 
 <style scoped lang="scss">
 .timeline {
+  flex: 1;
   position: relative;
   grid-area: timeline;
   display: grid;

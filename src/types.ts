@@ -24,4 +24,5 @@ export interface Track {
 
 export type Timeline = {
   tracks: Track[]
+  speed: number
 }

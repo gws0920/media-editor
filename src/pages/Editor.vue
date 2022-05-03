@@ -6,24 +6,25 @@ import TitleBar from '@/components/Editor/TitleBar.vue'
 </script>
 
 <template>
-  <TitleBar/>
   <div class="editor">
-    <Medias />
-    <Monitor />
+    <TitleBar/>
+    <div class="content">
+      <Medias />
+      <Monitor />
+    </div>
     <Timeline />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .editor {
-  height: calc(100vh - 60px);
+  height: 100vh;
   width: 100vw;
-  display: grid;
-  grid-template-areas:
-    "medias monitor"
-    "timeline timeline"
-  ;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  .content {
+    display: flex;
+    height: 45vh;
+  }
 }
 </style>
