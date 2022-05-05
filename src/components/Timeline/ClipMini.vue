@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import { Clip } from '@/types'
-import { CLIP_TYPE } from '@/utils'
+import { CLIP_TYPE, us2px, VIDEO_TRACK_HEIGHT, OTHER_TRACK_HEIGHT, getClipThumbs } from '@/utils'
 interface Props {
   clip: Clip,
   style?: StyleSheet
@@ -10,9 +10,17 @@ const props = defineProps<Props>()
 
 
 const el = document.getElementById(props.clip.id)
-const { width, height, left, top } = el?.getBoundingClientRect() || {}
-const background = el?.style.background
 
+let [width, height, left, top] = [us2px(props.clip.duration), props.clip.type === CLIP_TYPE.VIDEO ? VIDEO_TRACK_HEIGHT : OTHER_TRACK_HEIGHT, 0, 0]
+if (el) {
+  const rect = el.getBoundingClientRect() || {}
+  width = rect.width
+  height = rect.height
+  left = rect.left
+  top = rect.top
+}
+
+const background = el?.style.background || getClipThumbs(props.clip).join(',')
 const style = ref({
   width: width + 'px',
   height: height + 'px',
