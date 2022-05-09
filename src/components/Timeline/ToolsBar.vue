@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Undo, Redo, Delete, Cut, AddAlt, SubtractAlt, FitToScreen, SplitScreen } from '@vicons/carbon'
-import { NIcon, NSpace, NDivider, NSlider } from 'naive-ui'
 import { InteractiveStore, useInteractiveStore } from "@/store/interactive"
 import { TimelineStore, useTimelineStore } from '@/store/timeline'
 import { RULER_MAP } from '@/utils'
@@ -34,32 +33,69 @@ const deleteCurClips = () => {
     <NDivider class="divider" />
     <div class="tools-bar">
       <NSpace class="tools-bar-left">
-        <NIcon :size="18" class="icon" title="撤销">
-          <Undo />
-        </NIcon>
-        <NIcon :size="18" class="icon" title="恢复">
-          <Redo />
-        </NIcon>
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" class="icon">
+              <Undo />
+            </NIcon>
+          </template>
+          撤销
+        </NTooltip>
+        
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" class="icon">
+              <Redo />
+            </NIcon>
+          </template>
+          恢复
+        </NTooltip>
+    
         <NDivider vertical />
-        <NIcon :size="18" :class="{disabled: !hasSelection}" title="删除" @click="deleteCurClips">
-          <Delete />
-        </NIcon>
-        <NIcon :size="18" class="icon" title="切割">
-          <Cut />
-        </NIcon>
-        <NIcon :size="18" class="icon" title="单声道分离">
-          <SplitScreen />
-        </NIcon>
+
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" :class="{disabled: !hasSelection}" @click="deleteCurClips">
+              <Delete />
+            </NIcon>
+          </template>
+          删除
+        </NTooltip>
+        
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" class="icon">
+              <Cut />
+            </NIcon>
+          </template>
+          切割
+        </NTooltip>
+       
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" class="icon">
+              <SplitScreen />
+            </NIcon>
+          </template>
+          单声道分离
+        </NTooltip>
+        
       </NSpace>
       <NSpace class="tools-bar-right">
-        <NIcon
-          :size="18"
-          :class="['icon', interactiveStore.level === 0 ? 'disabled' : '']"
-          title="时间线缩小"
-          @click="changeLevel(-1)"
-        >
-          <SubtractAlt />
-        </NIcon>
+        <NTooltip>
+          <template #trigger>
+            <NIcon
+              :size="18"
+              :class="['icon', interactiveStore.level === 0 ? 'disabled' : '']"
+              title=""
+              @click="changeLevel(-1)"
+            >
+              <SubtractAlt />
+            </NIcon>
+          </template>
+          时间线缩小
+        </NTooltip>
+
         <n-slider
           v-model:value="level"
           class="level"
@@ -67,18 +103,31 @@ const deleteCurClips = () => {
           :min="0"
           :max="RULER_MAP.length - 1"
         />
-        <NIcon
-          :size="18"
-          :class="['icon', interactiveStore.level === RULER_MAP.length - 1 ? 'disabled' : '']"
-          title="时间线放大"
-          @click="changeLevel(1)"
-        >
-          <AddAlt />
-        </NIcon>
+
+        <NTooltip>
+          <template #trigger>
+            <NIcon
+              :size="18"
+              :class="['icon', interactiveStore.level === RULER_MAP.length - 1 ? 'disabled' : '']"
+              @click="changeLevel(1)"
+            >
+              <AddAlt />
+            </NIcon>
+          </template>
+          时间线放大
+        </NTooltip>
+        
         <NDivider vertical />
-        <NIcon :size="18" class="icon" title="全局显示">
-          <FitToScreen />
-        </NIcon>
+
+        
+        <NTooltip>
+          <template #trigger>
+            <NIcon :size="18" class="icon">
+              <FitToScreen />
+            </NIcon>
+          </template>
+          全局显示
+        </NTooltip>
       </NSpace>
     </div>
     <NDivider class="divider" dashed />

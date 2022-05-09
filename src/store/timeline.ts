@@ -66,7 +66,7 @@ export const useTimelineStore = defineStore('timeline', {
      * 获取吸附点, 不关联滚动条位置！ TODO: 目前是全量计算
      * @returns [[us, px], [us, px]]所有的吸附点，point表示时刻，px表示位置
      */
-    getSings(): [number, number][] {
+    getSings(): [us: number, px: number][] {
       const { tracks } = this.tlData
       const sings = new Map()
       tracks.forEach(track => {
